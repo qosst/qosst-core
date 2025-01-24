@@ -118,7 +118,7 @@ class ChannelConfiguration(BaseConfiguration):
                 "channel.voa is missing from the configuration file. Using default values for all the parameters."
             )
 
-        self.voa = ChannelVOAConfiguration(config.get("network", {}))
+        self.voa = ChannelVOAConfiguration(config.get("voa", {}))
 
     def __str__(self) -> str:
         res = "===========================\n"
