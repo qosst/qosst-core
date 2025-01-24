@@ -748,7 +748,7 @@ class BobConfiguration(BaseConfiguration):
                 "bob.laser is missing from the configuration file. Using default values for all the parameters."
             )
 
-        if not "polarisation_revovery" in config:
+        if not "polarisation_recovery" in config:
             logger.warning(
                 "bob.polarisation_recovery is missing from the configuration file. Using default values for all the parameters."
             )
