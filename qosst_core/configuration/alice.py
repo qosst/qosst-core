@@ -17,7 +17,7 @@
 """
 Configuration for Alice section.
 """
-from typing import Dict, Type
+from typing import Dict, Type, Any
 import logging
 from warnings import warn
 
@@ -148,12 +148,14 @@ class AliceDACConfiguration(BaseConfiguration):
     amplitude: float  #: Amplitude of the DAC, in V.
     device: Type[GenericDAC]  #: Device class of the DAC.
     channels: list  #: List of channels to use.
+    location: Any #: Location of the device
     extra_args: dict  #: Extra args to pass to the DAC class.
 
     DEFAULT_RATE: float = 500e6  #: Default rate in Samples/second.
     DEFAULT_AMPLITUDE: float = 0  #: Default amplitude, in V.
     DEFAULT_DEVICE_STR: str = "qosst_hal.dac.FakeDAC"  #: Default class of the DAC.
     DEFAULT_CHANNELS: list = [0, 1]  #: Default channels to use.
+    DEFAULT_LOCATION: str = ""  #: Default location.
     DEFAULT_EXTRA_ARGS: dict = {}  #: Default extra args for the DAC.
 
     def from_dict(self, config: dict) -> None:
@@ -180,6 +182,7 @@ class AliceDACConfiguration(BaseConfiguration):
             )
 
         self.channels = config.get("channels", self.DEFAULT_CHANNELS)
+        self.location = config.get("location", self.DEFAULT_LOCATION)
         self.extra_args = config.get("extra_args", self.DEFAULT_EXTRA_ARGS)
 
     def __str__(self) -> str:
@@ -189,6 +192,7 @@ class AliceDACConfiguration(BaseConfiguration):
         res += f"Amplitude : {self.amplitude}\n"
         res += f"Device : {self.device}\n"
         res += f"Channels : {self.channels}\n"
+        res += f"Location : {self.location}\n"
         res += f"Extra args : {self.extra_args}\n"
         res += "\n"
         return res

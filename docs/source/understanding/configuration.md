@@ -440,6 +440,14 @@ Import path of the DAC class to use. The DAC should be a valid class, inheriting
 List of channels to use for the DAC.
 ```
 
+```{py:attribute} location
+:type: Any
+:value: '""'
+:noindex:
+
+Location of the device
+```
+
 ```{py:attribute} extra_args
 :type: dict
 :value: "{}"

@@ -41,10 +41,19 @@ requests = "^2.27.1"
 importlib-metadata = { version = "*", python = "<3.8" }
 
 [tool.poetry.group.dev.dependencies]
-Sphinx = "^5.0.0"
-sphinx-rtd-theme = "^1.0.0"
+Sphinx = [
+  { version = "^5.0.0", python = ">=3.9, <3.10" },
+  { version = "^8.1.0", python = ">=3.10, <3.14" },
+]
+sphinx-rtd-theme = [
+  { version = "^1.0.0", python = ">=3.9, <3.10" },
+  { version = "^3.0.0", python = ">=3.10, <3.14" },
+]
 docstr-coverage = "^2.2.0"
-myst-parser = "^1.0.0"
+myst-parser = [
+  { version = "^1.0.0", python = ">=3.9, <3.10" },
+  { version = "^4.0.0", python = ">=3.10, <3.14" },
+]
 sphinx-prompt = "^1.5.0"
 sphinx-argparse-cli = "^1.11.0"
 sphinxcontrib-programoutput = "^0.17"

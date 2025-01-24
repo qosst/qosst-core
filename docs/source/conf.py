@@ -99,7 +99,6 @@ autodoc_member_order = "bysource"
 html_logo = "_static/qosst_logo_square_white.png"
 html_theme_options = {
     "logo_only": True,
-    "display_version": False,
 }
 myst_heading_anchors = 3
 
