@@ -819,6 +819,7 @@ class BobConfiguration(BaseConfiguration):
         res += str(self.dsp)
         res += str(self.parameters_estimation)
         res += str(self.laser)
+        res += str(self.polarisation_recovery)
         res += str(self.electronic_noise)
         res += str(self.electronic_shot_noise)
         return res
