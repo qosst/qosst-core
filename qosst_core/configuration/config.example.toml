@@ -214,6 +214,10 @@ bind_port = 8181
 # Default : 500e6
 rate = 500e6
 
+# Location of the device
+# Default : ""
+location = ""
+
 # Amplitude, in V
 # The generated data by the DSP will be between +1 and -1
 # If the amplitude is A, then this means that the +1 will be
@@ -507,6 +511,12 @@ timeout = 10
 
 [bob.dsp]
 
+# Direct pilot tracking.
+# If True, the first pilot can directly be used to estimate beat frequency
+# and phase noise
+# Default : false
+direct_pilot_tracking = false
+
 # Debug mode.
 # If True, a DSPDebug object is returned with additional information.
 # Default : true
@@ -523,12 +533,15 @@ fir_size = 500
 tone_filtering_cutoff = 10e6
 
 # Set true to process the data in subframes
-# Default : false
-process_subframes = false
+# Default : true
+process_subframes = true
 
 # Size of the subframes if process_subframes is true
-# Default : 0
-subframes_size = 0
+# Default : 50000
+subframes_size = 50000
+
+# Number of a subdivisions of a subframe
+subframes_subdivisions = 4
 
 # Abort clock recovery
 # If the difference of clock mismatch (in ratio)
@@ -550,17 +563,41 @@ alice_dac_rate = 500e6
 # Default: [[0.0, 100e3]]
 exclusion_zone_pilots = [[0.0, 100e3]]
 
-# Size of filter for the phase recovery
-# If not 0, the recovered phase will be filter with
+# Size of phase filter for the phase recovery
+# If not 0, the recovered phase noise will be filtered with
 # a uniform1d filter (i.e. moving average) with the size
 # defined by this parameter.
 # Default: 0
 pilot_phase_filtering_size = 0
 
+# Size of derivative of phase filter for the phase recovery
+# If not 0, the recovered derivative of the phase noise will be filtered with
+# a uniform1d filter (i.e. moving average) with the size
+# defined by this parameter.
+# Default: 0
+pilot_frequency_filtering_size = 0
+
 # Number of samples to estimate properly
 # f_beat in general dsp
 # Default : 100000
 num_samples_fbeat_estimation = 100000
+
+# Number of samples to estimate the frequency of the pilots
+# Default : 10 000 000
+num_samples_pilot_search = 10000000
+
+# By which factor the signal is oversampled when searching for the
+# optimal symbol sampling time.
+# Default : 1
+symbol_timing_oversampling = 1
+
+# Proportion of samples to keep for the electronic noise estimation.
+# Default : 0.1 (10% of all samples)
+elec_noise_estimation_ratio = 0.1
+
+# Proportion of samples to keep for the electronic+shot noise estimation.
+# Default : 1.0 (all samples)
+elec_shot_noise_estimation_ratio = 1.0
 
 [bob.dsp.equalizer]
 

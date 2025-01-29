@@ -948,7 +948,7 @@ Those filters are mainly used to filter the tones.
 Cut-off frequency for the filtering of the pilots in Hz.
 
 ````{note}
-Once the pilot as been detected by a maximum peak searching in frequency, yielding the frequency {math}`f_{tone}`, the tone is filtered with a FIR filter on the frequency region
+Once the pilot has been detected by a maximum peak searching in frequency, yielding the frequency {math}`f_{tone}`, the tone is filtered with a FIR filter on the frequency region
 
 ```{math}
 \left[f_{tone} - f_{cutoff}, f_{tone}+f_{cutoff}\right]
@@ -956,6 +956,13 @@ Once the pilot as been detected by a maximum peak searching in frequency, yieldi
 
 ````
 `````
+
+```{py:attribute} direct_pilot_tracking
+:type: bool
+:value: False
+
+If `True`, a simpler and significantly faster algorithm is used for demodulation. The first pilot tone is recovered in the time-domain with a band-pass filter, its phase is smoothed, and the resulting signal is used to frequency-shift the quantum data back to the baseband. No explicit frequency estimation of the pilot is performed.
+```
 
 ```{py:attribute} process_subframes
 :type: bool
@@ -978,6 +985,41 @@ This parameter controls if the data should be processed as subframes (`True`) or
 The size of the subframes can be adjusted by choosing how many **symbols** should be recovered in each subframes.
 
 This parameter should not be 0 if `process_subframes` is `True`.
+```
+
+```{py:attribute} subframes_subdivisions
+:type: int
+:value: 1
+
+During the global phase recovery step, a subframe can be further divided into smaller chunks, each of which will then receive a different phase correction. This makes the detection more capable of tracking sudden phase shifts, but with the risk of inducing more noise due to phase estimation errors.
+```
+
+```{py:attribute} num_samples_pilot_search
+:type: int
+:value: 10000000
+
+Number of samples to use for pilot frequency estimation. Due to the limited frequency resolution of the FFT, a large sample size above 1M is needed to resolve small ADC/DAC clock errors.
+```
+
+```{py:attribute} symbol_timing_oversampling
+:type: int
+:value: 1
+
+The factor by which the signal is oversampled when determining the optimal symbol timing grid.
+```
+
+```{py:attribute} elec_noise_estimation_ratio
+:type: float
+:value: 0.1
+
+Proportion of samples to keep for the electronic noise estimation. For example, a value of 0.1 means that the noise will be estimated on the last 10% of the signal duration. Since the electronic noise sample is fairly long, performing the estimation on a subset of the data will still provide reliable estimates.
+```
+
+```{py:attribute} elec_shot_noise_estimation_ratio
+:type: float
+:value: 1.0
+
+Proportion of samples to keep for the electronic+shot noise estimation. For example, 0.1 means the noise will be estimated on the last 10% of the signal duration. The electronic+shot noise signal is typically short and can be analyzed in its entirety without a significant computational cost.
 ```
 
 ```{py:attribute} abort_clock_recovery

@@ -144,6 +144,7 @@ class AliceDACConfiguration(BaseConfiguration):
     Class holding the configuration for Alice DAC. It should be initialized with the alice.dac section.
     """
 
+    location: str  #: Location of the DAC
     rate: float  #: Rate of the DAC, in Samples/second.
     amplitude: float  #: Amplitude of the DAC, in V.
     device: Type[GenericDAC]  #: Device class of the DAC.
@@ -151,6 +152,7 @@ class AliceDACConfiguration(BaseConfiguration):
     location: Any #: Location of the device
     extra_args: dict  #: Extra args to pass to the DAC class.
 
+    DEFAULT_LOCATION: str = ""  #: Default location
     DEFAULT_RATE: float = 500e6  #: Default rate in Samples/second.
     DEFAULT_AMPLITUDE: float = 0  #: Default amplitude, in V.
     DEFAULT_DEVICE_STR: str = "qosst_hal.dac.FakeDAC"  #: Default class of the DAC.
@@ -168,6 +170,7 @@ class AliceDACConfiguration(BaseConfiguration):
             InvalidConfiguration: if the dac class cannot be loaded.
             InvalidConfiguration: if the dac device is not a subclass of GenericDAC
         """
+        self.location = config.get("location", self.DEFAULT_LOCATION)
         self.rate = config.get("rate", self.DEFAULT_RATE)
         self.amplitude = config.get("amplitude", self.DEFAULT_AMPLITUDE)
         device_str = config.get("device", self.DEFAULT_DEVICE_STR)
@@ -188,6 +191,7 @@ class AliceDACConfiguration(BaseConfiguration):
     def __str__(self) -> str:
         res = "Alice DAC Configuration\n"
         res += "-----------------------\n"
+        res += f"Location : {self.location}\n"
         res += f"Rate : {self.rate*1e-6} MSamples/s\n"
         res += f"Amplitude : {self.amplitude}\n"
         res += f"Device : {self.device}\n"

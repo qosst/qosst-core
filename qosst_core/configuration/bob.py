@@ -428,37 +428,55 @@ class BobDSPConfiguration(BaseConfiguration):
     tone_filtering_cutoff: (
         float  #: Cutoff for the FIR filter for the filtering of the pilot tone.
     )
+    direct_pilot_tracking: (
+        bool  #: Whether the first pilot can directly be used to estimate beat frequency and phase noise. Defaults to False.
+    )
     process_subframes: bool
-    subframes_size: int
+    subframes_size: int  # Size of DSP processing block
+    subframes_subdivisions: int  # Subdivision of a subframe, for phase recovery
     abort_clock_recovery: float  #: Maximal value of clock mismatch allowed to be found by clock recovery algorithm.
     alice_dac_rate: float  #: DAC rate of Alice
     exclusion_zone_pilots: List[
         Tuple[float, float]
     ]  # List of exclusion zones for the pilot search.
     pilot_phase_filtering_size: int  #: Size of uniform1d filter for the phase recovery.
+    pilot_frequency_filtering_size: int  #: Size of uniform1d filter for the phase recovery applied on derivative of size.
     num_samples_fbeat_estimation: (
         int  #: Number of samples to estimate f_beat in general DSP.
+    )
+    num_samples_pilot_search: (
+        int  #: Number of samples to estimate the frequency of the pilots.
+    )
+    symbol_timing_oversampling: (
+        int  #: By which factor the signal is oversampled when searching for the optimal symbol sampling time.
     )
     equalizer: (
         BobDSPEqualizerConfiguration  #: The equalizer part of Bob's DSP configuration
     )
+    elec_noise_estimation_ratio: float  #: Ratio of the total number of electronic noise samples to use for the variance estimation
+    elec_shot_noise_estimation_ratio: float  #: Ratio of the total number of electronic and shot noise samples to use for the variance estimation
 
     DEFAULT_DEBUG: bool = True  #: Default value fot the debug mode.
+    DEFAULT_DIRECT_PILOT_TRACKING: bool = False
     DEFAULT_FIR_SIZE: int = 500
     DEFAULT_TONE_FILTERING_CUTOFF: float = (
         10e6  #: Default value for the cutoff of the FIR filter for the filtering of the tone.
     )
-    DEFAULT_PROCESS_SUBFRAMES: bool = False
-    DEFAULT_SUBFRAMES_SIZE: int = 0
+    DEFAULT_PROCESS_SUBFRAMES: bool = True
+    DEFAULT_SUBFRAMES_SIZE: int = 50_000
+    DEFAULT_SUBFRAMES_SUBDIVISIONS: int = 1
     DEFAULT_ABORT_CLOCK_RECOVERY: float = 0  #: Default value for abort_clock_recovery.
     DEFAULT_ALICE_DAC_RATE: float = 500e6  #: Default value for the DAC rate of Alice.
     DEFAULT_EXCLUSION_ZONE_PILOTS: List[List[float]] = [
         [0.0, 100e3]
     ]  #: Default value for the exclusion zone for the search of the pilots.
-    DEFAULT_PILOT_PHASE_FILTERING_SIZE: int = (
-        0  #: Default value for the filtering size of the phase for the phase recovery.
-    )
+    DEFAULT_PILOT_PHASE_FILTERING_SIZE: int = 0 #: Default value for the filtering size of the phase for the phase recovery.
+    DEFAULT_PILOT_FREQUENCY_FILTERING_SIZE: int = 0 #: Default value for the filtering size of the phase for the phase recovery.
     DEFAULT_NUM_SAMPLES_FBEAT_ESTIMATION: int = 100000
+    DEFAULT_NUM_SAMPLES_PILOT_SEARCH: int = 10_000_000
+    DEFAULT_SYMBOL_TIMING_OVERSAMPLING: int = 1
+    DEFAULT_ELEC_NOISE_ESTIMATION_RATIO: float = 1.0
+    DEFAULT_ELEC_SHOT_NOISE_ESTIMATION_RATIO: float = 1.0
 
     def from_dict(self, config: dict) -> None:
         """Read configuration from dict.
@@ -472,6 +490,9 @@ class BobDSPConfiguration(BaseConfiguration):
             )
 
         self.debug = config.get("debug", self.DEFAULT_DEBUG)
+        self.direct_pilot_tracking = config.get(
+            "direct_pilot_tracking", self.DEFAULT_DIRECT_PILOT_TRACKING
+        )
         self.fir_size = config.get("fir_size", self.DEFAULT_FIR_SIZE)
         self.tone_filtering_cutoff = config.get(
             "tone_filtering_cutoff", self.DEFAULT_TONE_FILTERING_CUTOFF
@@ -479,11 +500,18 @@ class BobDSPConfiguration(BaseConfiguration):
         self.process_subframes = config.get(
             "process_subframes", self.DEFAULT_PROCESS_SUBFRAMES
         )
-        self.subframes_size = config.get("subframes_size", self.DEFAULT_SUBFRAMES_SIZE)
+        self.subframes_size = config.get(
+            "subframes_size", self.DEFAULT_SUBFRAMES_SIZE
+        )
+        self.subframes_subdivisions = config.get(
+            "subframes_subdivisions", self.DEFAULT_SUBFRAMES_SUBDIVISIONS
+        )
         self.abort_clock_recovery = config.get(
             "abort_clock_recovery", self.DEFAULT_ABORT_CLOCK_RECOVERY
         )
-        self.alice_dac_rate = config.get("alice_dac_rate", self.DEFAULT_ALICE_DAC_RATE)
+        self.alice_dac_rate = config.get(
+            "alice_dac_rate", self.DEFAULT_ALICE_DAC_RATE
+        )
         exclusion = config.get(
             "exclusion_zone_pilots", self.DEFAULT_EXCLUSION_ZONE_PILOTS
         )
@@ -491,24 +519,46 @@ class BobDSPConfiguration(BaseConfiguration):
         self.pilot_phase_filtering_size = config.get(
             "pilot_phase_filtering_size", self.DEFAULT_PILOT_PHASE_FILTERING_SIZE
         )
+        self.pilot_frequency_filtering_size = config.get(
+            "pilot_frequency_filtering_size", self.DEFAULT_PILOT_FREQUENCY_FILTERING_SIZE
+        )
         self.num_samples_fbeat_estimation = config.get(
             "num_samples_fbeat_estimation", self.DEFAULT_NUM_SAMPLES_FBEAT_ESTIMATION
         )
+        self.num_samples_pilot_search = config.get(
+            "num_samples_pilot_search", self.DEFAULT_NUM_SAMPLES_PILOT_SEARCH
+        )
+        self.symbol_timing_oversampling = config.get(
+            "symbol_timing_oversampling", self.DEFAULT_SYMBOL_TIMING_OVERSAMPLING
+        )
         self.equalizer = BobDSPEqualizerConfiguration(config.get("equalizer", {}))
+        self.elec_noise_estimation_ratio = config.get(
+            "elec_noise_estimation_ratio", self.DEFAULT_ELEC_NOISE_ESTIMATION_RATIO
+        )
+        self.elec_shot_noise_estimation_ratio = config.get(
+            "elec_shot_noise_estimation_ratio", self.DEFAULT_ELEC_SHOT_NOISE_ESTIMATION_RATIO
+        )
 
     def __str__(self) -> str:
         res = "Bob DSP Configuration\n"
         res += "---------------------\n"
+        res += f"Direct pilot tracking : {self.direct_pilot_tracking}\n"
         res += f"Debug : {self.debug}\n"
         res += f"FIR size : {self.fir_size}\n"
         res += f"Tone filtering cut-off: {self.tone_filtering_cutoff}\n"
         res += f"Process subframes : {self.process_subframes}\n"
         res += f"Subframes size : {self.subframes_size}\n"
+        res += f"Subframes subdivisions : {self.subframes_subdivisions}\n"
         res += f"Abort clock recovery : {self.abort_clock_recovery}\n"
         res += f"Alice DAC rate : {self.alice_dac_rate}\n"
         res += f"Exclusion zone : {self.exclusion_zone_pilots}\n"
         res += f"Pilot phase filtering size : {self.pilot_phase_filtering_size}\n"
-        res += f"Number of samples for fbeat estimation : {self.DEFAULT_NUM_SAMPLES_FBEAT_ESTIMATION}\n"
+        res += f"Pilot frequency filtering size : {self.pilot_frequency_filtering_size}\n"
+        res += f"Number of samples for fbeat estimation : {self.num_samples_fbeat_estimation}\n"
+        res += f"Number of samples for pilot search : {self.num_samples_pilot_search}\n"
+        res += f"Symbol timing oversampling : {self.symbol_timing_oversampling}\n"
+        res += f"Ratio of number of samples for electronic noise estimation : {self.elec_noise_estimation_ratio}\n"
+        res += f"Ratio of number of samples for electronic and shot noise estimation : {self.elec_shot_noise_estimation_ratio}\n"
         res += "\n"
         res += str(self.equalizer)
         return res
