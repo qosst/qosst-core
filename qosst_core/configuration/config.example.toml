@@ -700,3 +700,11 @@ length = 3989
 # A rate of 0 will be understood as to use the same rate as the DAC.
 # Default : 0
 rate = 0
+
+[post_processing]
+
+[post_processing.privacy_amplification]
+
+# Extractor for privacy amplification.
+# Default : "qosst_core.extractors.DummyExtractor"
+extractor = "qosst_core.extractors.DummyExtractor"

@@ -78,6 +78,8 @@ For most of the section and subsections, if the section or parameter is not pres
 | frame.pilots                                      | yes           |
 | frame.quantum                                     | yes           |
 | frame.zadoff_chu                                  | yes           |
+| post_processing                                   | no            |
+| post_processing.privacy_amplification             | yes           |
 ```
 
 ## Parameters in the configuration file
@@ -1294,6 +1296,20 @@ Rate of the Zadoff-Chu sequence in Samples/second. The notation e is available.
 
 If 0 is used, the Zadoff-Chu is emitted at the maximal rate (*i.e.* the rate of Alice's DAC).
 ```
+
+### Post processing
+
+This section contains the parameters for the post-processing (error correction and privacy amplification) steps.
+
+#### Privacy amplification 
+
+```{py:attribute} extractor
+:type: str
+:value: "qosst_core.extractors.DummyExtractor"
+
+Class of the extractor to use for the privacy amplification. It should be a valid loadable class inheriting from qosst_core.extractors.RandomnessExtractor.
+```
+
 
 ## Example configuration file
 
