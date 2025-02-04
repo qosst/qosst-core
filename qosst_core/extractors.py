@@ -73,10 +73,7 @@ class RandomnessExtractor(abc.ABC):
         logger.debug("Generatind seed of length %i", seed_length)
         return [random.randint(0, 1) for _ in range(seed_length)]
 
-    @abc.abstractmethod
-    def extract(
-        self, reconciled_key: List[int], seed: Optional[List[int]] = None
-    ) -> Tuple[Optional[List[int]], Optional[List[int]]]:
+    def extract(self, reconciled_key: List[int], seed: Optional[List[int]] = None):
         """Extract randomness from the input reconciled key, using the seed.
 
         If seed is None, a new seed is genrerated using
@@ -86,6 +83,25 @@ class RandomnessExtractor(abc.ABC):
         Args:
             reconciled_key (List[int]): the reconciled key data.
             seed (Optional[List[int]], optional): seed for the extractor. Defaults to None.
+
+        Returns:
+            Tuple[Optional[List[int]], Optional[List[int]]]: final extracted key and seed.
+        """
+
+        if seed is None:
+            seed = self.generate_seed(self.seed_size)
+        return self._extract(reconciled_key, seed)
+
+
+    @abc.abstractmethod
+    def _extract(
+        self, reconciled_key: List[int], seed: List[int] = None
+    ) -> Tuple[Optional[List[int]], Optional[List[int]]]:
+        """Actually perform extraction from the input reconciled key, using the seed.
+
+        Args:
+            reconciled_key (List[int]): the reconciled key data.
+            seed (Optional[List[int]]): seed for the extractor.
 
         Returns:
             Tuple[Optional[List[int]], Optional[List[int]]]: final extracted key and seed.
@@ -103,7 +119,7 @@ class DummyExtractor(RandomnessExtractor):
     def seed_size(self) -> int:
         return 0
 
-    def extract(self, reconciled_key: List[int], seed: List[int] = None):
+    def _extract(self, reconciled_key: List[int], seed: List[int]):
         logger.warning(
             "This is not a true extractor and is solely returning the same key as the input."
         )
