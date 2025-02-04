@@ -90,6 +90,15 @@ class RandomnessExtractor(abc.ABC):
 
         if seed is None:
             seed = self.generate_seed(self.seed_size)
+        else:
+            if len(seed) != self.seed_size:
+                logger.error(
+                    "Seed length is incorrect (%i != %i). Aborting extraction.",
+                    self.seed_size,
+                    len(seed),
+                )
+                return None, None
+
         return self._extract(reconciled_key, seed)
 
 
