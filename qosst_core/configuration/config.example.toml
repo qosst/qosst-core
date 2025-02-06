@@ -737,3 +737,8 @@ length = 3989
 # A rate of 0 will be understood as to use the same rate as the DAC.
 # Default : 0
 rate = 0
+
+# The amplitude of the Zadoff-Chu sequence.
+# An amplitude of 1 means that the Zadoff-Chu is output at the maximum amplitude of the DAC.
+# Default : 1
+amplitude = 1
