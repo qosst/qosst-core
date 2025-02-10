@@ -7,7 +7,11 @@ authors = [
   "Ilektra Karakosta-Amarantidou <ilektra.karakostaamarantidou@studenti.unipd.it>",
 ]
 include = ["qosst_core/configuration/config.example.toml"]
-packages = [{ include = "qosst_core" }, { include = "qosst_core/py.typed" }]
+packages = [
+  { include = "qosst_core" },
+  { include = "qosst_core/py.typed" },
+  { include = "qosst_core/licenses/*.txt" },
+]
 license = "GPLv3"
 readme = "README.md"
 homepage = "https://github.com/qosst"

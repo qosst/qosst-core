@@ -38,6 +38,7 @@ from qosst_core.configuration.commands import (
 )
 from qosst_core.authentication.commands import generate_falcon_key_pair
 from qosst_core.logging import create_loggers
+from qosst_core.licenses.list_licenses import list_licenses
 
 THANKS_STRING = """
 Thanks for using QOSST !
@@ -121,6 +122,11 @@ def _create_main_parser() -> argparse.ArgumentParser:
     )
     hardware_parser.set_defaults(func=print_hardware)
     hardware_parser.add_argument("package", help="Name of the package to inspect")
+
+    licenses_parser = subparsers.add_parser(
+        "licenses", help="Print licenses of dependencies"
+    )
+    licenses_parser.set_defaults(func=licenses)
     return parser
 
 
@@ -347,6 +353,20 @@ def print_hardware(args: argparse.Namespace) -> bool:
     """
     print(list_hardware_str(args.package))
     return True
+
+
+def licenses(_args: argparse.Namespace) -> bool:
+    """Print the list of dependencies and let the user print their license.
+
+    Args:
+        _args (argparse.Namespace): the args passed to the command line.
+
+    _args are unused.
+
+    Returns:
+        bool: True in case of successful operation, False otherwise..
+    """
+    return list_licenses()
 
 
 if __name__ == "__main__":
