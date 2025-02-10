@@ -104,7 +104,7 @@ class RandomnessExtractor(abc.ABC):
 
     @abc.abstractmethod
     def _extract(
-        self, reconciled_key: List[int], seed: List[int] = None
+        self, reconciled_key: List[int], seed: List[int]
     ) -> Tuple[Optional[List[int]], Optional[List[int]]]:
         """Actually perform extraction from the input reconciled key, using the seed.
 
