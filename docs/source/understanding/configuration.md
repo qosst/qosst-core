@@ -1337,6 +1337,16 @@ Rate of the Zadoff-Chu sequence in Samples/second. The notation e is available.
 If 0 is used, the Zadoff-Chu is emitted at the maximal rate (*i.e.* the rate of Alice's DAC).
 ```
 
+```{py:attribute} amplitude
+:type: float
+:value: 1
+:noindex:
+
+Relative amplitude of the Zadoff-Chu sequence. 
+
+An amplitude of 0 means that there is no Zadoff-Chu at the beginning of the frame. An amplitude of 1 means that the Zadoff-Chu is emitted at the maximum voltage of the DAC.
+
+
 ## Example configuration file
 
 Below is displayed the example configuration file as provided in the `qosst-core` package.
