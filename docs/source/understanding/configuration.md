@@ -79,6 +79,7 @@ For most of the section and subsections, if the section or parameter is not pres
 | frame.quantum                                     | yes           |
 | frame.zadoff_chu                                  | yes           |
 | post_processing                                   | no            |
+| post_processing.reconciliation                    | yes           |
 | post_processing.privacy_amplification             | yes           |
 ```
 
@@ -323,6 +324,19 @@ This should also be 0 for real tests.
 
 Emission schema. The list of possible emission schemas is available [here](../api/schema.md). The schema should be a valid instance of {py:class}`qosst_core.schema.emission.EmissionSchema`.
 ```
+
+````{py:attribute} override_photon_number
+:type: float
+:value: 0
+
+If this parameter is not zero, Alice replaces her photon number estimation by this parameter. It is only intended for testing the application with offline data and you should be set to 0 for real experiments.
+
+If not zero, a warning is triggered when the configuration is read.
+
+```{warning}
+This should also be 0 for real experiments.
+```
+````
 
 #### Signal generation
 

@@ -148,7 +148,7 @@ class AliceDACConfiguration(BaseConfiguration):
     amplitude: float  #: Amplitude of the DAC, in V.
     device: Type[GenericDAC]  #: Device class of the DAC.
     channels: list  #: List of channels to use.
-    location: Any #: Location of the device
+    location: Any  #: Location of the device
     extra_args: dict  #: Extra args to pass to the DAC class.
 
     DEFAULT_RATE: float = 500e6  #: Default rate in Samples/second.
@@ -442,6 +442,7 @@ class AliceConfiguration(BaseConfiguration):
     )
     artificial_excess_noise: float  #: Artificial excess noise to add to the generatred signal but not save symbols.
     schema: EmissionSchema  #: Schema of emission.
+    override_photon_number: float  #: Override photon number value if not 0.
     network: AliceNetworkConfiguration  #: Network configuration object
     dac: AliceDACConfiguration  #: DAC configuration object
     signal_generation: (
@@ -463,12 +464,13 @@ class AliceConfiguration(BaseConfiguration):
     DEFAULT_EMISSION_WAVELENGTH: float = (
         1550e-9  #: Default value for the emission wavelength.
     )
-    DEFAULT_ARTIFICIAL_EXCESS_NOISE = (
+    DEFAULT_ARTIFICIAL_EXCESS_NOISE: float = (
         0  #: Default value for the artificial excess noise.
     )
-    DEFAULT_EMISSION_SCHEMA_STR = (
+    DEFAULT_EMISSION_SCHEMA_STR: str = (
         "qosst_core.schema.emission.SINGLE_POLARISATION_SINGLE_SIDEBAND"
     )
+    DEFAULT_OVERRIDE_PHOTON_NUMBER: float = 0  #: Default value for the override.
 
     def from_dict(self, config: dict) -> None:
         """Fill instance from dict
@@ -552,6 +554,15 @@ class AliceConfiguration(BaseConfiguration):
                 f"The emission schema {schema_str} is not an instance of qosst_core.schema.emission.EmissionSchema."
             )
 
+        self.override_photon_number = config.get(
+            "override_photon_number", self.DEFAULT_OVERRIDE_PHOTON_NUMBER
+        )
+
+        if self.override_photon_number:
+            logger.warning(
+                "Override photon number is not zero. Assuming you know what you are doing..."
+            )
+
         self.network = AliceNetworkConfiguration(config.get("network", {}))
         self.dac = AliceDACConfiguration(config.get("dac", {}))
         self.signal_generation = AliceSignalGenerationConfiguration(
@@ -575,6 +586,7 @@ class AliceConfiguration(BaseConfiguration):
         res += f"Photodiode to output conversion : {self.photodiode_to_output_conversion}\n"
         res += f"Emission wavelength: {self.emission_wavelength}\n"
         res += f"Artificial excess noise : {self.artificial_excess_noise}\n"
+        res += f"Override photon number : {self.override_photon_number}\n"
         res += "\n"
         res += str(self.signal_generation)
         res += str(self.network)

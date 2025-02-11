@@ -142,6 +142,16 @@ artificial_excess_noise = 0
 # Default : "qosst_core.schema.emission.SINGLE_POLARISATION_SINGLE_SIDEBAND"
 schema = "qosst_core.schema.emission.SINGLE_POLARISATION_SINGLE_SIDEBAND"
 
+# Override photon number
+# Danger : only modify if you know what you are doing !
+# For any real experiment this parameter to should be set to 0.
+# However for offline testing, in case of a non-zero value,
+# this replaces the estimated value of photon number by Alice.
+# Using a value different than 0 will raise a warning during
+# configuration loading.
+# Default : 0
+override_photon_number = 0
+
 [alice.signal_generation]
 
 # Symbols path
