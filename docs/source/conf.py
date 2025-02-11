@@ -20,8 +20,8 @@ sys.path.insert(0, os.path.abspath("."))
 # -- Project information -----------------------------------------------------
 
 project = "qosst-core"
-copyright = "2021-2024, Yoann Piétri, Ilektra Karakosta-Amarantidou"
-author = "Yoann Piétri, Ilektra Karakosta-Amarantidou"
+copyright = "2021-2024, Yoann Piétri, Ilektra Karakosta-Amarantidou, Matteo Schiavon"
+author = "Yoann Piétri, Ilektra Karakosta-Amarantidou, Matteo Schiavon"
 
 # The full version, including alpha/beta/rc tags
 release = __version__

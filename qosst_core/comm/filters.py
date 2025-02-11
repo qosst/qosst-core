@@ -155,10 +155,8 @@ def rect_filter(length: int, symbol_period: float, sampling_rate: float):
     coeffs = np.ones(length)
     time_delta = 1 / float(sampling_rate)
     time_idx = ((np.arange(length) - length / 2)) * time_delta
-
-    coeffs[time_idx < -symbol_period / 2] = 0
+    coeffs[time_idx <= -symbol_period / 2] = 0
     coeffs[time_idx > symbol_period / 2] = 0
-
     return time_idx, coeffs
 
 
@@ -169,7 +167,7 @@ class Filter(abc.ABC):
     A filter has a times and filter attributes that are initialized by the
     __init__ and set_filter abstract methods.
 
-    There is a also a mehtod apply filter to directly apply the current filter.
+    The apply method directly applies the current filter to data.
     """
 
     times: np.ndarray  #: time array.
@@ -204,7 +202,7 @@ class Filter(abc.ABC):
         return self.times
 
     def apply_filter(self, data: np.ndarray) -> np.ndarray:
-        """Apply the filter to data and returns the filtered data.
+        """Applies the filter to data and returns the filtered data.
 
         This methods uses the fftconvolve from scipy to apply the filter.
 

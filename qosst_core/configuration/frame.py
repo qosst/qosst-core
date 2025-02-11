@@ -170,10 +170,12 @@ class FrameZadoffChuConfiguration(BaseConfiguration):
     root: int  #: Root value for the Zadoff-Chu Sequence
     length: int  #: Length of the Zadoff-Chu sequence
     rate: float  #: Rate of the Zadoff-Chu sequence. A rate of zero will be understood as the same rate as the DAC.
+    amplitude: float  #: Amplitude of the Zadoff-Chu sequence. An amplitude of 1.0 means that the sequence is output at the maximum amplitude of the DAC.
 
     DEFAULT_ROOT: int = 5  #: Default value for the root.
     DEFAULT_LENGTH: int = 3989  #: Default value for the length.
     DEFAULT_RATE: float = 0  #: Default rate.
+    DEFAULT_AMPLITUDE: float = 1  #: Default amplitude of the Zadoff-Chu sequence.
 
     def from_dict(self, config: dict) -> None:
         """Fill instance from dict.
@@ -187,6 +189,7 @@ class FrameZadoffChuConfiguration(BaseConfiguration):
         self.root = config.get("root", self.DEFAULT_ROOT)
         self.length = config.get("length", self.DEFAULT_LENGTH)
         self.rate = config.get("rate", self.DEFAULT_RATE)
+        self.amplitude = config.get("amplitude", self.DEFAULT_AMPLITUDE)
 
         if not gcd(self.root, self.length) == 1:
             raise InvalidConfiguration(
@@ -199,6 +202,7 @@ class FrameZadoffChuConfiguration(BaseConfiguration):
         res += f"Root : {self.root}\n"
         res += f"Length : {self.length}\n"
         res += f"Rate : {self.rate}\n"
+        res += f"Amplitude: {self.amplitude}\n"
         return res
 
 

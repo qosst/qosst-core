@@ -5,6 +5,7 @@ description = "Core submodule of QOSST, containing modules for configuration, co
 authors = [
   "Yoann Piétri <Yoann.Pietri@lip6.fr>",
   "Ilektra Karakosta-Amarantidou <ilektra.karakostaamarantidou@studenti.unipd.it>",
+  "Matteo Schiavon <Matteo.Schiavon@lip6.fr>",
 ]
 include = [
   "qosst_core/configuration/config.example.toml",
