@@ -703,6 +703,19 @@ rate = 0
 
 [post_processing]
 
+[post_processing.reconciliation]
+
+# Efficiency of the error reconciliation scheme.
+# It should be a float between 0 and 1.
+# Default : 0.95
+beta = 0.95
+
+# Dimension of the multi-dimensional reconciliation scheme.
+# It should be 1, 2, 4 or 8.
+# Default : 8
+dimension = 8
+
+
 [post_processing.privacy_amplification]
 
 # Extractor for privacy amplification.

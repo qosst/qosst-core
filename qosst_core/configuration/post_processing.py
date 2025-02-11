@@ -31,7 +31,42 @@ from qosst_core.extractors import RandomnessExtractor
 logger = logging.getLogger(__name__)
 
 
-class PrivacyAmplficationConfiguration(BaseConfiguration):
+class ReconciliationConfiguration(BaseConfiguration):
+    """
+    Configuration for the error reconciliation step.
+    It should correspond to the post_processing.reconciliation section.
+    """
+
+    beta: float  #: Efficiency of the error reconciliation code.
+    dimension: float  #: Dimension of the multi-dimensional reconciliation.
+
+    DEFAULT_BETA: float = 0.95  #: Default value of the error reconciliation code.
+    DEFAULT_DIMENSION: int = 8  #: Default dimension of the error reconciliation code.
+
+    def from_dict(self, config):
+        self.beta = config.get("beta", self.DEFAULT_BETA)
+        self.dimension = config.get("dimension", self.DEFAULT_DIMENSION)
+
+        if not isinstance(self.beta, float) or self.beta < 0 or self.beta > 1:
+            raise InvalidConfiguration(
+                f"{self.beta} is a valid value for beta (it should be a float between 0 and 1)."
+            )
+
+        if not isinstance(self.dimension, int) or self.dimension not in [1, 2, 4, 8]:
+            raise InvalidConfiguration(
+                f"{self.dimension} is not a valid value for the dimension of the multi-dimensional scheme. It should be 1,2,4 or 8."
+            )
+
+    def __str__(self) -> str:
+        res = "Error Reconciliation Configuration\n"
+        res += "----------------------------------\n"
+        res += f"beta : {self.beta}\n"
+        res += f"Dimension : {self.dimension}\n"
+        res += "\n"
+        return res
+
+
+class PrivacyAmplificationConfiguration(BaseConfiguration):
     """
     Configuration for the privacy amplification step.
     It should correspond to the post_processing.privacy_amplification section.
@@ -81,7 +116,8 @@ class PostProcessingConfiguration(BaseConfiguration):
     The post processing configuration. It should correspond to the post_processing section.
     """
 
-    privacy_amplification: PrivacyAmplficationConfiguration  #: The post processing privcay amplfication configuration.
+    reconciliation: ReconciliationConfiguration  #: The post processing error reconciliation configuration.
+    privacy_amplification: PrivacyAmplificationConfiguration  #: The post processing privacy amplfication configuration.
 
     def from_dict(self, config: dict) -> None:
         """Fill instance from the config.
@@ -89,12 +125,20 @@ class PostProcessingConfiguration(BaseConfiguration):
         Args:
             config (dict): dict corresponding to the post_processing section.
         """
+        if "reconciliation" not in config:
+            logger.warning(
+                "post_processing.reconciliation is missing from the configuration file. Using default values for all the parameters."
+            )
         if "privacy_amplification" not in config:
             logger.warning(
-                "post_processing.privacy amplification is missing from the configuration file. Using default values for all the parameters."
+                "post_processing.privacy_amplification is missing from the configuration file. Using default values for all the parameters."
             )
 
-        self.voa = PrivacyAmplficationConfiguration(
+        self.reconciliation = ReconciliationConfiguration(
+            config.get("reconciliation", {})
+        )
+
+        self.privacy_amplification = PrivacyAmplificationConfiguration(
             config.get("privacy_amplification", {})
         )
 
@@ -102,5 +146,6 @@ class PostProcessingConfiguration(BaseConfiguration):
         res = "===================================\n"
         res += "== Post Processing Configuration ==\n"
         res += "===================================\n"
-        res += str(self.voa)
+        res += str(self.reconciliation)
+        res += str(self.privacy_amplification)
         return res

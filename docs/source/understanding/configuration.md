@@ -1301,6 +1301,22 @@ If 0 is used, the Zadoff-Chu is emitted at the maximal rate (*i.e.* the rate of 
 
 This section contains the parameters for the post-processing (error correction and privacy amplification) steps.
 
+#### Reconciliation
+
+```{py:attribute} beta
+:type: float
+:value: 0.95
+
+Efficiency if the error reconciliation scheme. It should be between 0 and 1.
+```
+
+```{py:attribute} dimension
+:type: int
+:value: 8
+
+Dimension of the multi-dimensional reconciliation scheme. It should be 1, 2, 4 or 8.
+```
+
 #### Privacy amplification 
 
 ```{py:attribute} extractor
