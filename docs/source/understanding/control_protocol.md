@@ -139,7 +139,7 @@ Here are the messages (variable length header and content that should be issued)
 
 ```{code-block} JSON
 {
-  "qosst_version": "QOSST/0.2",
+  "qosst_version": "QOSST/1.0",
 }
 ```
 
@@ -613,11 +613,9 @@ No content.
 
 Codes reserved for Error Correction (EC) are 180 to 199.
 
-Bob sends a `EC_INITIALIZATION` with the parameters required for the error correction step. Alice can accept with `EC_READY` or `EC_DENIED`. Alice and Bob will then loop to correct every block with Bob first sending a `EC_BLOCK` and Alice responding `EC_BLOCK_ACK` if the correction worked or `EC_BLOCK_ERROR` if not.
+Bob sends a `EC_INITIALIZATION` with the parameters required for the error correction step. Alice tries to perform the error correction and answers either with `EC_VERIFICATION` in case of success (where Alice sends the CRC for Bob to check) or `EC_FAIL`.
 
-At the end of this loop, there might still have some remaining errors and Bob can start another algorithm for correcting those errors with `EC_REMAINING`. Alice answers either with `EC_REMAINING_ACK` if it was successful or `EC_REMAINING_ERROR` if it was not.
-
-At the end, Bob computes the hash of his key and send to Alice with the messages `EC_VERIFICATION`. If the hashes are equal, Alice answers with `EC_VERIFICATION_SUCCESS`, and if not `EC_VERIFICATION_FAIL`.
+In case of success at Alice side, Bob then checks the CRC against his own and send the final discard flags to Alice with `EC_DISCARD_FLAGS` and Alice answers with `EC_FINISHED`.
 
 
 Here is the sequence diagram:
@@ -627,10 +625,6 @@ Here is the sequence diagram:
 align: center
 ---
 Sequence diagram for error correction
-```
-
-```{warning}
-This part will probably change as the error correction algorithm is still not very defined.
 ```
 
 ### EC_INITIALIZATION
@@ -650,12 +644,14 @@ This part will probably change as the error correction algorithm is still not ve
 
 ```{code-block} JSON
 {
-  "matrix": [[1,1], [1,1]],
-  "noise": 0.1,
+  "channel_message": [0.4784985508658615, -0.05958841748306372],
+  "syndrome": [[0, 0, 1, 1, 0, 0, 0]],
+  "normalization_vector": [2.079335585979522, 2.079335585979522, 2.079335585979522],
+  "signal_to_noise_ratio": -1.98
 }
 ```
 
-### EC_READY
+### EC_VERIFICATION
 
 #### Header
 
@@ -670,9 +666,14 @@ This part will probably change as the error correction algorithm is still not ve
 
 #### Content
 
-No content.
+```{code-block} JSON
+{
+  "crc_alice": [[1, 1, 1, 0, 0, 1, 0, 1]],
+  "discard_flags": [false, true]
+}
+```
 
-### EC_DENIED
+### EC_ERROR
 
 #### Header
 
@@ -689,11 +690,11 @@ No content.
 
 ```{code-block} JSON
 {
-  "error_message": "Matrix is not valid."
+  "error_message": "normalization vector is not valid."
 }
 ```
 
-### EC_BLOCK
+### EC_DISCARD_FLAGS
 
 #### Header
 
@@ -710,11 +711,11 @@ No content.
 
 ```{code-block} JSON
 {
-  "syndrome": [1.87, 5.67,]
+  {"final_discard_flags": [true, false]}
 }
 ```
 
-### EC_BLOCK_ACK
+### EC_FINISHED
 
 #### Header
 
@@ -730,145 +731,6 @@ No content.
 #### Content
 
 No content.
-
-### EC_BLOCK_ERROR
-
-#### Header
-
-```{code-block} JSON
-{
-  "content_length": 43,
-  "code": 185,
-  "challenge": "challenge_requested_by_bob",
-  "next_challenge": "next_challenge_for_bob"
-}
-```
-
-#### Content
-
-```{code-block} JSON
-{
-  "error_message": "Wrong syndrome length."
-}
-```
-
-### EC_REMAINING
-
-#### Header
-
-```{code-block} JSON
-{
-  "content_length": 21,
-  "code": 186,
-  "challenge": "challenge_requested_by_alice",
-  "next_challenge": "next_challenge_for_alice"
-}
-```
-
-#### Content
-
-```{code-block} JSON
-{
-  "some_parameter": 1,
-}
-```
-
-### EC_REMAINING_ACK
-
-#### Header
-
-```{code-block} JSON
-{
-  "content_length": 0,
-  "code": 187,
-  "challenge": "challenge_requested_by_bob",
-  "next_challenge": "next_challenge_for_bob"
-}
-```
-
-#### Content
-
-No content.
-
-### EC_REMAINING_ERROR
-
-#### Header
-
-```{code-block} JSON
-{
-  "content_length": 37,
-  "code": 188,
-  "challenge": "challenge_requested_by_bob",
-  "next_challenge": "next_challenge_for_bob"
-}
-```
-
-#### Content
-
-```{code-block} JSON
-{
-  "error_message": "Wrong parameter."
-}
-```
-
-### EC_VERIFICATION
-
-#### Header
-
-```{code-block} JSON
-{
-  "content_length": 28,
-  "code": 189,
-  "challenge": "challenge_requested_by_alice",
-  "next_challenge": "next_challenge_for_alice"
-}
-```
-
-#### Content
-
-```{code-block} JSON
-{
-  "hash": 385789897481570657,
-}
-```
-
-### EC_VERIFICATION_SUCCESS
-
-#### Header
-
-```{code-block} JSON
-{
-  "content_length": 0,
-  "code": 190,
-  "challenge": "challenge_requested_by_bob",
-  "next_challenge": "next_challenge_for_bob"
-}
-```
-
-#### Content
-
-No content.
-
-### EC_VERIFICATION_FAIL
-
-#### Header
-
-```{code-block} JSON
-{
-  "content_length": 40,
-  "code": 191,
-  "challenge": "challenge_requested_by_bob",
-  "next_challenge": "next_challenge_for_bob"
-}
-```
-
-#### Content
-
-```{code-block} JSON
-{
-  "error_message": "Keys are not equal."
-}
-```
 
 ## Privacy amplification
 
@@ -903,9 +765,7 @@ Sequence diagram for privacy amplification
 ```{code-block} JSON
 {
   "seed": [1,0,1,1,0],
-  "secret_key_length": 2000,
-  "subblock_length": 5,
-  "feedback_polynomial": [1,1,1,0,0],
+  "secret_key_ratio": 0.5,
 }
 ```
 
@@ -943,7 +803,7 @@ No content.
 
 ```{code-block} JSON
 {
-  "error_message": "Invalid value for the feedback polynomial."
+  "error_message": "An error happened during extraction."
 }
 ```
 
