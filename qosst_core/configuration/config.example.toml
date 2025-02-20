@@ -246,10 +246,6 @@ device = "qosst_hal.dac.FakeDAC"
 # Default : [0,1]
 channels = [0, 1]
 
-# Location of the device
-# Default : ""
-location = ""
-
 # Extras arguments to the DAC class.
 # They will be passed as kwargs.
 # For instance having extra_args = {"erase": true}
@@ -773,3 +769,20 @@ dimension = 8
 # Extractor for privacy amplification.
 # Default : "qosst_core.extractors.DummyExtractor"
 extractor = "qosst_core.extractors.DummyExtractor"
+
+[pushkey]
+
+# Interface to use to push the key.
+# This should be a function taking as a first argument the UUID
+# of the key material and as a second argument the key
+# material along with optional kwargs.
+# Default : "qosst_core.key_management.default_push_key"
+interface = "qosst_core.key_management.default_push_key"
+
+# Kwargs to pass to the push key interface
+# In addition to the UUID of the key material
+# and key material itself.
+# If kwargs = {key=value, ...}, then the function is called
+# with func(key_material_id, key_material, key=value, ...)
+# Default : {}
+kwargs = {}

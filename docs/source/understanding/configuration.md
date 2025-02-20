@@ -81,6 +81,7 @@ For most of the section and subsections, if the section or parameter is not pres
 | post_processing                                   | no            |
 | post_processing.reconciliation                    | yes           |
 | post_processing.privacy_amplification             | yes           |
+| pushkey                                           | no            |
 ```
 
 ## Parameters in the configuration file
@@ -1390,6 +1391,24 @@ Dimension of the multi-dimensional reconciliation scheme. It should be 1, 2, 4 o
 :value: "qosst_core.extractors.DummyExtractor"
 
 Class of the extractor to use for the privacy amplification. It should be a valid loadable class inheriting from qosst_core.extractors.RandomnessExtractor.
+```
+
+### Pushkey
+
+This section contains the parameters for pushing the key material to the KMS at the end of a frame.
+
+```{py:attribute} interface
+:type: str
+:value: "qosst_core.key_management.default_push_key"
+
+Interface to use to push the key. This should be a callable, taking as a first parameter the UUID of the key material and as a second parameter the key material itself as a bytestring, and eventual additional kwargs.
+```
+
+```{py:attribute} kwargs
+:type: dict
+:value: {}
+
+Eventual kwargs to pass to the interface.
 ```
 
 ## Example configuration file
