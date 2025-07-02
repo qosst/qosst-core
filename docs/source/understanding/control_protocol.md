@@ -732,6 +732,40 @@ Sequence diagram for error correction
 
 No content.
 
+### EC_INITIALIZATION_REMOTE
+
+#### Header
+
+```{code-block} JSON
+{
+  "content_length": 0,
+  "code": 190,
+  "challenge": "challenge_requested_by_alice",
+  "next_challenge": "next_challenge_for_alice"
+}
+```
+
+### EC_INITIALIZATION_REMOTE_AKC
+
+#### Header
+
+```{code-block} JSON
+{
+  "content_length": 0,
+  "code": 191,
+  "challenge": "challenge_requested_by_bob",
+  "next_challenge": "next_challenge_for_bob"
+}
+```
+
+#### Content
+
+No content.
+
+#### Content
+
+No content.
+
 ## Privacy amplification
 
 Codes reserved for Parameters Estimation (PA) are 200 to 219.

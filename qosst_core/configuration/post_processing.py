@@ -39,13 +39,23 @@ class ReconciliationConfiguration(BaseConfiguration):
 
     beta: float  #: Efficiency of the error reconciliation code.
     dimension: float  #: Dimension of the multi-dimensional reconciliation.
+    remote: bool  #: Use the reconciliation procedure with a remote worker.
+    remote_endpoint: str  #: Endpoint to use for the remote worker.
 
     DEFAULT_BETA: float = 0.95  #: Default value of the error reconciliation code.
     DEFAULT_DIMENSION: int = 8  #: Default dimension of the error reconciliation code.
+    DEFAULT_REMOTE: bool = False  #: Default remote reconciliation.
+    DEFAULT_REMOTE_ENDPOINT: str = (
+        ""  #: Default endpoint for the remote reconciliation.
+    )
 
     def from_dict(self, config):
         self.beta = config.get("beta", self.DEFAULT_BETA)
         self.dimension = config.get("dimension", self.DEFAULT_DIMENSION)
+        self.remote = config.get("remote", self.DEFAULT_REMOTE)
+        self.remote_endpoint = config.get(
+            "remote_endpoint", self.DEFAULT_REMOTE_ENDPOINT
+        )
 
         if not isinstance(self.beta, float) or self.beta < 0 or self.beta > 1:
             raise InvalidConfiguration(
@@ -62,6 +72,8 @@ class ReconciliationConfiguration(BaseConfiguration):
         res += "----------------------------------\n"
         res += f"beta : {self.beta}\n"
         res += f"Dimension : {self.dimension}\n"
+        res += f"Remote : {self.remote}\n"
+        res += f"Remote endpoint : {self.remote_endpoint}\n"
         res += "\n"
         return res
 

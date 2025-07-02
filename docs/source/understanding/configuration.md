@@ -1384,6 +1384,20 @@ Efficiency if the error reconciliation scheme. It should be between 0 and 1.
 Dimension of the multi-dimensional reconciliation scheme. It should be 1, 2, 4 or 8.
 ```
 
+```{py:attribute} remote
+:type: bool
+:value: false
+
+If true, use a remote worker for the reconciliation.
+```
+
+```{py:attribute} remote_endpoint
+:type: str
+:value: ""
+
+Use this endpoint for the remote worker if remote is true.
+```
+
 #### Privacy amplification 
 
 ```{py:attribute} extractor

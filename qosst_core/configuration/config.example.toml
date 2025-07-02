@@ -763,6 +763,18 @@ beta = 0.95
 # Default : 8
 dimension = 8
 
+# Use the reconciliation procedure in remote.
+# If True, this will send the data to a remote
+# worker for the reconciliation. Note that this 
+# call will still be blocking and hence cannot be used
+# for parallelisation. This requires zmq.
+# Default : False
+remote = false
+
+# Remote endpoint to use in the remote mode.
+# Default : ""
+endpoint = ""
+
 
 [post_processing.privacy_amplification]
 
