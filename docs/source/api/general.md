@@ -54,3 +54,29 @@
    :members:
    
 ```
+
+## Extractors
+
+```{eval-rst}
+.. automodule:: qosst_core.extractors
+   :members:
+   :private-members:
+   
+```
+
+## Licenses
+
+```{eval-rst}
+.. automodule:: qosst_core.licenses
+   :members:
+   :private-members:
+   
+```
+
+
+```{eval-rst}
+.. automodule:: qosst_core.licenses.list_licenses
+   :members:
+   :private-members:
+   
+```

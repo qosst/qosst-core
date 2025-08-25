@@ -1,5 +1,5 @@
 # qosst-core - Core module of the Quantum Open Software for Secure Transmissions.
-# Copyright (C) 2021-2024 Yoann Piétri
+# Copyright (C) 2021-2025 Yoann Piétri
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -370,3 +370,21 @@ def legacy_configuration_menu(config: Any):
             second_action = input("Continue changing parameter [Y/n] ")
             if second_action == "n":
                 action = "E"
+
+def complex_to_real(input_data: np.ndarray) -> np.ndarray:
+    """
+    Transform the input data of a complex np array of size n
+    to a real np array of size 2n such that if the input data is
+    [a_1+i*b_1, a_2+i*b_2, ..., a_n+i*b_n] then the output array
+    is [a_1, b_1, a_2, b_2, ..., a_n, b_n].
+
+    Args:
+        input_data (np.ndarray): the input complex array of size n.
+
+    Returns:
+        np.ndarray: the output real array of size 2n.
+    """
+    out = np.zeros(2 * len(input_data))
+    out[::2] = input_data.real
+    out[1::2] = input_data.imag
+    return out

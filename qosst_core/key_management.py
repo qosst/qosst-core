@@ -15,16 +15,32 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
-This is the qosst_core module.
-
-It contains classes and functions that are useful for both Alice and Bob.
-
-It contains :
-* the configuration reader
-* the control protocol helpers
-* the modulations
-* some constants.
+File containing the default push key method.
 """
-__version__ = "0.10.1.dev+pp"
 
-RELEASE_NAME = "Karadoc"
+import uuid
+from typing import List
+
+import logging
+
+logger = logging.getLogger(__name__)
+
+
+def default_push_key(
+    key_material_id: uuid.UUID, key_material: List[int], **_kwargs
+) -> bool:
+    """Dummy push key function.
+
+    Args:
+        key_material_id (uuid.UUID): uuid of the key material.
+        key_material (List[int]): key material.
+
+    Returns:
+        bool: True if the operation was successful, False otherwise.
+    """
+    logger.info(
+        "Pushing key %s (len %i) to nowhere... Consider using an acutal push key interface",
+        str(key_material_id),
+        len(key_material),
+    )
+    return True

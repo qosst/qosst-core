@@ -78,6 +78,10 @@ For most of the section and subsections, if the section or parameter is not pres
 | frame.pilots                                      | yes           |
 | frame.quantum                                     | yes           |
 | frame.zadoff_chu                                  | yes           |
+| post_processing                                   | no            |
+| post_processing.reconciliation                    | yes           |
+| post_processing.privacy_amplification             | yes           |
+| pushkey                                           | no            |
 ```
 
 ## Parameters in the configuration file
@@ -321,6 +325,19 @@ This should also be 0 for real tests.
 
 Emission schema. The list of possible emission schemas is available [here](../api/schema.md). The schema should be a valid instance of {py:class}`qosst_core.schema.emission.EmissionSchema`.
 ```
+
+````{py:attribute} override_photon_number
+:type: float
+:value: 0
+
+If this parameter is not zero, Alice replaces her photon number estimation by this parameter. It is only intended for testing the application with offline data and you should be set to 0 for real experiments.
+
+If not zero, a warning is triggered when the configuration is read.
+
+```{warning}
+This should also be 0 for real experiments.
+```
+````
 
 #### Signal generation
 
@@ -1345,7 +1362,68 @@ If 0 is used, the Zadoff-Chu is emitted at the maximal rate (*i.e.* the rate of 
 Relative amplitude of the Zadoff-Chu sequence. 
 
 An amplitude of 0 means that there is no Zadoff-Chu at the beginning of the frame. An amplitude of 1 means that the Zadoff-Chu is emitted at the maximum voltage of the DAC.
+```
 
+### Post processing
+
+This section contains the parameters for the post-processing (error correction and privacy amplification) steps.
+
+#### Reconciliation
+
+```{py:attribute} beta
+:type: float
+:value: 0.95
+
+Efficiency if the error reconciliation scheme. It should be between 0 and 1.
+```
+
+```{py:attribute} dimension
+:type: int
+:value: 8
+
+Dimension of the multi-dimensional reconciliation scheme. It should be 1, 2, 4 or 8.
+```
+
+```{py:attribute} remote
+:type: bool
+:value: false
+
+If true, use a remote worker for the reconciliation.
+```
+
+```{py:attribute} remote_endpoint
+:type: str
+:value: ""
+
+Use this endpoint for the remote worker if remote is true.
+```
+
+#### Privacy amplification 
+
+```{py:attribute} extractor
+:type: str
+:value: "qosst_core.extractors.DummyExtractor"
+
+Class of the extractor to use for the privacy amplification. It should be a valid loadable class inheriting from qosst_core.extractors.RandomnessExtractor.
+```
+
+### Pushkey
+
+This section contains the parameters for pushing the key material to the KMS at the end of a frame.
+
+```{py:attribute} interface
+:type: str
+:value: "qosst_core.key_management.default_push_key"
+
+Interface to use to push the key. This should be a callable, taking as a first parameter the UUID of the key material and as a second parameter the key material itself as a bytestring, and eventual additional kwargs.
+```
+
+```{py:attribute} kwargs
+:type: dict
+:value: {}
+
+Eventual kwargs to pass to the interface.
+```
 
 ## Example configuration file
 

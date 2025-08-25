@@ -18,7 +18,7 @@
 This module contains the class for the classical communication between Alice and Bob.
 """
 
-QOSST_VERSION: str = "QOSST/0.2"  #: Current version of the control protocol.
+QOSST_VERSION: str = "QOSST/1.0"  #: Current version of the control protocol.
 DEFAULT_PORT: int = 8181  #: Default network port.
 CHALLENGE_LENGTH: int = 15  #: Length of the challenge for authentication.
 READING_BUFFER: int = 2048  #: Length of the reading buffer.

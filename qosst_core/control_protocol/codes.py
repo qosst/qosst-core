@@ -15,7 +15,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
-Enumeration of the QOSST/0.2 protocol.
+Enumeration of the QOSST/1.0 protocol.
 """
 
 from enum import IntEnum
@@ -23,7 +23,7 @@ from enum import IntEnum
 
 class QOSSTCodes(IntEnum):
     """
-    Codes for the QOSST/0.2 protocol.
+    Codes for the QOSST/1.0 protocol.
     """
 
     # Generic codes (10-49)
@@ -98,17 +98,12 @@ class QOSSTCodes(IntEnum):
 
     # Error Correction (180-199)
     EC_INITIALIZATION = 180
-    EC_READY = 181
-    EC_DENIED = 182
-    EC_BLOCK = 183
-    EC_BLOCK_ACK = 184
-    EC_BLOCK_ERROR = 185
-    EC_REMAINING = 186
-    EC_REMAINING_ACK = 187
-    EC_REMAINING_ERROR = 188
-    EC_VERIFICATION = 189
-    EC_VERIFICATION_SUCCESS = 190
-    EC_VERIFICATION_FAIL = 191
+    EC_VERIFICATION = 181
+    EC_ERROR = 182
+    EC_DISCARD_FLAGS = 183
+    EC_FINISHED = 184
+    EC_INITIALIZATION_REMOTE = 190
+    EC_INITIALIZATION_REMOTE_ACK = 191
 
     # Privacy Amplification (200-219)
     PA_REQUEST = 200

@@ -142,6 +142,16 @@ artificial_excess_noise = 0
 # Default : "qosst_core.schema.emission.SINGLE_POLARISATION_SINGLE_SIDEBAND"
 schema = "qosst_core.schema.emission.SINGLE_POLARISATION_SINGLE_SIDEBAND"
 
+# Override photon number
+# Danger : only modify if you know what you are doing !
+# For any real experiment this parameter to should be set to 0.
+# However for offline testing, in case of a non-zero value,
+# this replaces the estimated value of photon number by Alice.
+# Using a value different than 0 will raise a warning during
+# configuration loading.
+# Default : 0
+override_photon_number = 0
+
 [alice.signal_generation]
 
 # Symbols path
@@ -235,10 +245,6 @@ device = "qosst_hal.dac.FakeDAC"
 # List of channels to use.
 # Default : [0,1]
 channels = [0, 1]
-
-# Location of the device
-# Default : ""
-location = ""
 
 # Extras arguments to the DAC class.
 # They will be passed as kwargs.
@@ -742,3 +748,53 @@ rate = 0
 # An amplitude of 1 means that the Zadoff-Chu is output at the maximum amplitude of the DAC.
 # Default : 1
 amplitude = 1
+
+[post_processing]
+
+[post_processing.reconciliation]
+
+# Efficiency of the error reconciliation scheme.
+# It should be a float between 0 and 1.
+# Default : 0.95
+beta = 0.95
+
+# Dimension of the multi-dimensional reconciliation scheme.
+# It should be 1, 2, 4 or 8.
+# Default : 8
+dimension = 8
+
+# Use the reconciliation procedure in remote.
+# If True, this will send the data to a remote
+# worker for the reconciliation. Note that this 
+# call will still be blocking and hence cannot be used
+# for parallelisation. This requires zmq.
+# Default : False
+remote = false
+
+# Remote endpoint to use in the remote mode.
+# Default : ""
+endpoint = ""
+
+
+[post_processing.privacy_amplification]
+
+# Extractor for privacy amplification.
+# Default : "qosst_core.extractors.DummyExtractor"
+extractor = "qosst_core.extractors.DummyExtractor"
+
+[pushkey]
+
+# Interface to use to push the key.
+# This should be a function taking as a first argument the UUID
+# of the key material and as a second argument the key
+# material along with optional kwargs.
+# Default : "qosst_core.key_management.default_push_key"
+interface = "qosst_core.key_management.default_push_key"
+
+# Kwargs to pass to the push key interface
+# In addition to the UUID of the key material
+# and key material itself.
+# If kwargs = {key=value, ...}, then the function is called
+# with func(key_material_id, key_material, key=value, ...)
+# Default : {}
+kwargs = {}

@@ -1,13 +1,16 @@
 [tool.poetry]
 name = "qosst-core"
-version = "0.10.1"
+version = "0.10.1.dev+pp"
 description = "Core submodule of QOSST, containing modules for configuration, control protocol, authentication, modulation and communication filters."
 authors = [
   "Yoann Piétri <Yoann.Pietri@lip6.fr>",
   "Ilektra Karakosta-Amarantidou <ilektra.karakostaamarantidou@studenti.unipd.it>",
   "Matteo Schiavon <Matteo.Schiavon@lip6.fr>",
 ]
-include = ["qosst_core/configuration/config.example.toml"]
+include = [
+  "qosst_core/configuration/config.example.toml",
+  "qosst_core/licenses/*.txt",
+]
 packages = [{ include = "qosst_core" }, { include = "qosst_core/py.typed" }]
 license = "GPLv3"
 readme = "README.md"

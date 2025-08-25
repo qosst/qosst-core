@@ -37,6 +37,8 @@ from qosst_core.configuration.authentication import AuthenticationConfiguration
 from qosst_core.configuration.exceptions import InvalidConfiguration
 from qosst_core.configuration.notifications import NotificationsConfiguration
 from qosst_core.configuration.channel import ChannelConfiguration
+from qosst_core.configuration.post_processing import PostProcessingConfiguration
+from qosst_core.configuration.pushkey import PushkeyConfiguration
 from qosst_core.utils import QOSSTPath
 
 logger = logging.getLogger(__name__)
@@ -91,6 +93,10 @@ class Configuration:
     alice: Optional[AliceConfiguration]  #: Alice configuration.
     bob: Optional[BobConfiguration]  #: Bob configuration.
     frame: Optional[FrameConfiguration]  #: Frame configuration.
+    post_processing: Optional[
+        PostProcessingConfiguration
+    ]  #: Post Processing configuration.
+    pushkey: Optional[PushkeyConfiguration]  #: Push key configuration
 
     DEFAULT_LABEL: str = "Example config"  #: Default label
     DEFAULT_SERIAL_NUMBER: str = ""
@@ -188,6 +194,18 @@ class Configuration:
         else:
             self.frame = None
 
+        if "post_processing" in config:
+            self.post_processing = PostProcessingConfiguration(
+                config["post_processing"]
+            )
+        else:
+            self.post_processing = None
+
+        if "pushkey" in config:
+            self.pushkey = PushkeyConfiguration(config["pushkey"])
+        else:
+            self.pushkey = None
+
     def __repr__(self) -> str:
         return f'Configuration("{self._config_path}")'
 
@@ -212,4 +230,8 @@ class Configuration:
         res += str(self.bob)
         res += "\n"
         res += str(self.frame)
+        res += "\n"
+        res += str(self.post_processing)
+        res += "\n"
+        res += str(self.pushkey)
         return res
