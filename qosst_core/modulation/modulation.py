@@ -18,10 +18,11 @@
 Generic modulation.
 """
 import abc
-from typing import Optional
+from typing import Optional, Type
 
 import numpy as np
 from qosst_core.utils import bitarray_to_decimal, decimal_to_bitarray
+from qosst_core.random import RandomnessSource, NumpyRandomnessSource
 
 
 # pylint: disable=too-few-public-methods
@@ -31,13 +32,20 @@ class Modulation(abc.ABC):
     """
 
     variance: float  #: variance of the modulation.
+    randomness: RandomnessSource
 
-    def __init__(self, variance: float, **_kwargs) -> None:
+    def __init__(
+        self, variance: float, randomness: RandomnessSource = None, **_kwargs
+    ) -> None:
         """
         Args:
             variance (float): variance of the modulation.
         """
         self.variance = variance
+        if randomness:
+            self.randomness = randomness
+        else:
+            self.randomness = NumpyRandomnessSource()
 
     @abc.abstractmethod
     def modulate(self, size: int) -> np.ndarray:
@@ -140,4 +148,6 @@ class DiscreteModulation(Modulation, abc.ABC):
         Returns:
             np.ndarray: array of symbols, of size size.
         """
-        return np.random.choice(self.constellation, size=size, p=self.distribution)
+        return self.randomness.choice(
+            self.constellation, size=size, p=self.distribution
+        )

@@ -32,6 +32,7 @@ from qosst_core.configuration.exceptions import InvalidConfiguration
 from qosst_core.configuration.base import BaseConfiguration
 from qosst_core.utils import get_object_by_import_path
 from qosst_core.schema.emission import EmissionSchema
+from qosst_core.random import RandomnessSource
 
 logger = logging.getLogger(__name__)
 
@@ -110,6 +111,56 @@ class AliceSignalGenerationConfiguration(BaseConfiguration):
         return res
 
 
+class AliceRandomnessConfiguration(BaseConfiguration):
+    """Class holding the configuration for randomness generation.
+
+
+    Returns:
+        _type_: _description_
+    """
+
+    source: Type[RandomnessSource]  #: The class for the source of randomness.
+    kwargs: Dict[str, Any]  #: The kwargs for the source of randomness.
+
+    DEFAULT_SOURCE_STR: str = (
+        "qosst_core.random.NumpyRandomnessSource"  #: Default class for the source.
+    )
+    DEFAULT_KWARGS: Dict[str, Any] = {}  #: Default kwargs.
+
+    def from_dict(self, config: dict):
+        """_summary_
+
+        Args:
+            config (dict): dict corresponding to the alice.randomness section.
+
+        Raises:
+            InvalidConfiguration: if the class for randomness source cannot be loaded.
+            InvalidConfiguration: if the class for randomness source is not a subclass of RandomnessSource.
+        """
+        source_str = config.get("device", self.DEFAULT_SOURCE_STR)
+        try:
+            self.source = get_object_by_import_path(source_str)
+        except ImportError as exc:
+            raise InvalidConfiguration(
+                f"Cannot load randomness source class {source_str}."
+            ) from exc
+
+        if not issubclass(self.source, RandomnessSource):
+            raise InvalidConfiguration(
+                f"The randomness source class {source_str} is not a subclass of qosst_core.random.RandomnessSource."
+            )
+
+        self.kwargs = config.get("kwargs", self.DEFAULT_KWARGS)
+
+    def __str__(self) -> str:
+        res = "Alice Randomness Configuration\n"
+        res += "-------------------------------\n"
+        res += f"Randomness source : {self.source}\n"
+        res += f"Kwargs : {self.source}\n"
+        res += "\n"
+        return res
+
+
 class AliceNetworkConfiguration(BaseConfiguration):
     """
     Class holding the configuration for Alice network. It should be intialized with the alice.network section.
@@ -149,7 +200,7 @@ class AliceDACConfiguration(BaseConfiguration):
     amplitude: float  #: Amplitude of the DAC, in V.
     device: Type[GenericDAC]  #: Device class of the DAC.
     channels: list  #: List of channels to use.
-    location: Any #: Location of the device
+    location: Any  #: Location of the device
     extra_args: dict  #: Extra args to pass to the DAC class.
 
     DEFAULT_LOCATION: str = ""  #: Default location
@@ -451,6 +502,7 @@ class AliceConfiguration(BaseConfiguration):
     signal_generation: (
         AliceSignalGenerationConfiguration  #: Signal generation configuration object
     )
+    randomness: AliceRandomnessConfiguration  #: Randomness configuration.
     powermeter: AlicePowerMeterConfiguration  #: PowerMeter configuration object
     voa: AliceVOAConfiguration  #: VOA configuration object.
     modulator_bias_control: (
@@ -497,6 +549,11 @@ class AliceConfiguration(BaseConfiguration):
         if "signal_generation" not in config:
             logger.warning(
                 "alice.signal_generation is missing from the configuration file. Using default values for all the parameters."
+            )
+
+        if "randomness" not in config:
+            logger.warning(
+                "alice.randomness is missing from the configuration file. Using default values for all the parameters."
             )
 
         if "powermeter" not in config:
@@ -561,6 +618,7 @@ class AliceConfiguration(BaseConfiguration):
         self.signal_generation = AliceSignalGenerationConfiguration(
             config.get("signal_generation", {})
         )
+        self.randomness = AliceRandomnessConfiguration(config.get("randomness", {}))
         self.powermeter = AlicePowerMeterConfiguration(config.get("powermeter", {}))
         self.voa = AliceVOAConfiguration(config.get("voa", {}))
         self.modulator_bias_control = AliceModulatorBiasControlConfiguration(
@@ -581,6 +639,7 @@ class AliceConfiguration(BaseConfiguration):
         res += f"Artificial excess noise : {self.artificial_excess_noise}\n"
         res += "\n"
         res += str(self.signal_generation)
+        res += str(self.randomness)
         res += str(self.network)
         res += str(self.dac)
         res += str(self.powermeter)

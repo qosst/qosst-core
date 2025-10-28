@@ -43,9 +43,8 @@ class GaussianModulation(Modulation):
         Returns:
             np.ndarray: size symbols from a Gaussian distribution on each quadrature.
         """
-        return np.random.normal(
-            loc=0, scale=np.sqrt(self.variance), size=(size,)
-        ) + 1j * np.random.normal(loc=0, scale=np.sqrt(self.variance), size=(size,))
+        x, y = self.randomness.binormal(0, np.sqrt(self.variance), size)
+        return x + 1j * y
 
     def __repr__(self) -> str:
         return f"GaussianModulation(Va={self.variance})"

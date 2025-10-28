@@ -142,6 +142,16 @@ artificial_excess_noise = 0
 # Default : "qosst_core.schema.emission.SINGLE_POLARISATION_SINGLE_SIDEBAND"
 schema = "qosst_core.schema.emission.SINGLE_POLARISATION_SINGLE_SIDEBAND"
 
+[alice.randomness]
+
+# Class for the randomness generation
+# Default : "qosst_core.random.NumpyRandomnessSource"
+source = "qosst_core.random.NumpyRandomnessSource"
+
+# Additional arguments to pass to the constructor
+# Default : {}
+kwargs = {}
+
 [alice.signal_generation]
 
 # Symbols path
