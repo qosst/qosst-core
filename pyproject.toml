@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "qosst-core"
-version = "0.10.1"
+version = "0.10.4"
 description = "Core submodule of QOSST, containing modules for configuration, control protocol, authentication, modulation and communication filters."
 authors = [
   "Yoann Piétri <Yoann.Pietri@lip6.fr>",
