@@ -24,13 +24,12 @@ dynamic = ["version"]
 dependencies = [
   "numpy >=1.26.0, <2.0 ; python_version >= '3.10' and python_version < '3.11'",
   "numpy >=2.2.0, <3.0 ; python_version >= '3.11' and python_version < '3.15'",
-  "scipy >=1.13.0, <1.15.0 ; python_version >= '3.10' and python_version < '3.11'",
+  "scipy >=1.13.0, <1.17.0 ; python_version >= '3.10' and python_version < '3.11'",
   "scipy >=1.17.0, <2.0 ; python_version >= '3.11' and python_version < '3.15'",
   "qosst-hal @ git+https://github.com/qosst/qosst-hal@dev",
   "falcon-digital-signature >= 0.9.3, <3.0",
   "toml >= 0.10.2",
   "requests >= 2.27.1",
-
 ]
 
 [project.urls]
@@ -42,7 +41,7 @@ documentation = "https://qosst-core.readthedocs.io/"
 qosst = "qosst_core.commands:main"
 
 [tool.poetry]
-version = "0.10.4.dev1"
+version = "0.10.4.dev2"
 include = ["qosst_core/configuration/config.example.toml"]
 packages = [{ include = "qosst_core" }, { include = "qosst_core/py.typed" }]
 
