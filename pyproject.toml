@@ -24,8 +24,8 @@ dynamic = ["version"]
 dependencies = [
   "numpy >=1.26.0, <2.0 ; python_version >= '3.10' and python_version < '3.11'",
   "numpy >=2.2.0, <3.0 ; python_version >= '3.11' and python_version < '3.15'",
-  "scipy >=1.13.0, <1.15.0; python_version >= '3.10' and python_version < '3.11'",
-  "scipy >=1.15.0, <2.0; python_version >= '3.11' and python_version < '3.15'",
+  "scipy >=1.13.0, <1.15.0 ; python_version >= '3.10' and python_version < '3.11'",
+  "scipy >=1.17.0, <2.0 ; python_version >= '3.11' and python_version < '3.15'",
   "qosst-hal @ git+https://github.com/qosst/qosst-hal@dev",
   "falcon-digital-signature >= 0.9.3, <3.0",
   "toml >= 0.10.2",
@@ -42,32 +42,23 @@ documentation = "https://qosst-core.readthedocs.io/"
 qosst = "qosst_core.commands:main"
 
 [tool.poetry]
-version = "0.10.4.dev0"
+version = "0.10.4.dev1"
 include = ["qosst_core/configuration/config.example.toml"]
 packages = [{ include = "qosst_core" }, { include = "qosst_core/py.typed" }]
 
 [tool.poetry.group.dev.dependencies]
-Sphinx = [
-  { version = "^5.0.0", python = ">=3.9, <3.10" },
-  { version = "^8.1.0", python = ">=3.10, <3.14" },
-]
-sphinx-rtd-theme = [
-  { version = "^1.0.0", python = ">=3.9, <3.10" },
-  { version = "^3.0.0", python = ">=3.10, <3.14" },
-]
+Sphinx = "^8.1.0"
+sphinx-rtd-theme = "^3.0.0"
 docstr-coverage = "^2.2.0"
-myst-parser = [
-  { version = "^1.0.0", python = ">=3.9, <3.10" },
-  { version = "^4.0.0", python = ">=3.10, <3.14" },
-]
+myst-parser = "^4.0.0"
 sphinx-prompt = "^1.5.0"
 sphinx-argparse-cli = "^1.11.0"
 sphinxcontrib-programoutput = "^0.17"
 matplotlib = "^3.5.1"
-setuptools = "^67.6.1"
+setuptools = "^82.0.1"
 mypy = "^1.3.0"
-pylint = "^3.3.0"
-black = "^23.9.1"
+pylint = "^4.0.5"
+black = "^26.3.1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0", "setuptools", "wheel"]
