@@ -480,7 +480,7 @@ class BobDSPConfiguration(BaseConfiguration):
     DEFAULT_ELEC_NOISE_ESTIMATION_RATIO: float = 1.0
     DEFAULT_ELEC_SHOT_NOISE_ESTIMATION_RATIO: float = 1.0
     DEFAULT_PHASE_ESTIMATOR_STR: str = (
-        "qosst_bob.dsp.phase_estimation.ClasicalPhaseEstimator"  #: Default phase estimator.
+        "qosst_bob.dsp.phase_estimation.ClassicalPhaseEstimator"  #: Default phase estimator.
     )
 
     def from_dict(self, config: dict) -> None:
