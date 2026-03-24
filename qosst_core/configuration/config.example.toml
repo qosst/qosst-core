@@ -236,10 +236,6 @@ device = "qosst_hal.dac.FakeDAC"
 # Default : [0,1]
 channels = [0, 1]
 
-# Location of the device
-# Default : ""
-location = ""
-
 # Extras arguments to the DAC class.
 # They will be passed as kwargs.
 # For instance having extra_args = {"erase": true}
@@ -598,6 +594,10 @@ elec_noise_estimation_ratio = 0.1
 # Proportion of samples to keep for the electronic+shot noise estimation.
 # Default : 1.0 (all samples)
 elec_shot_noise_estimation_ratio = 1.0
+
+# Phase estimator to use for the phase recovery.
+# Default : "qosst_bob.dsp.phase_estimation.ClasicalPhaseEstimator"
+phase_estimator = "qosst_bob.dsp.phase_estimation.ClasicalPhaseEstimator"
 
 [bob.dsp.equalizer]
 
