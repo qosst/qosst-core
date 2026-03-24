@@ -1,71 +1,63 @@
-[tool.poetry]
+[project]
 name = "qosst-core"
-version = "0.10.4"
 description = "Core submodule of QOSST, containing modules for configuration, control protocol, authentication, modulation and communication filters."
 authors = [
-  "Yoann Piétri <Yoann.Pietri@lip6.fr>",
-  "Ilektra Karakosta-Amarantidou <ilektra.karakostaamarantidou@studenti.unipd.it>",
-  "Matteo Schiavon <Matteo.Schiavon@lip6.fr>",
+  { name = "Yoann Piétri", email = "Yoann.Pietri@lip6.fr" },
+  { name = "Ilektra Karakosta-Amarantidou", email = "ilektra.karakostaamarantidou@studenti.unipd.it" },
+  { name = "Matteo Schiavon", email = "Matteo.Schiavon@lip6.fr" },
+  { name = "Thomas Liege", email = "Thomas.Liege@lip6.fr" },
 ]
-include = ["qosst_core/configuration/config.example.toml"]
-packages = [{ include = "qosst_core" }, { include = "qosst_core/py.typed" }]
-license = "GPLv3"
+license = "GPL-3.0-only"
 readme = "README.md"
-homepage = "https://github.com/qosst"
-repository = "https://github.com/qosst/qosst-core"
-documentation = "https://qosst-core.readthedocs.io/"
 classifiers = [
   "Development Status :: 4 - Beta",
   "Intended Audience :: Science/Research",
-  "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
   "Natural Language :: English",
   "Operating System :: OS Independent",
   "Topic :: Scientific/Engineering :: Physics",
   "Topic :: Security :: Cryptography",
 ]
+requires-python = ">=3.10, <3.15"
 
-[tool.poetry.dependencies]
-python = ">=3.9, <3.14"
-numpy = [
-  { version = "^1.26.0", python = ">=3.9, <3.11" },
-  { version = "^2.2.0", python = ">=3.11, <3.14" },
+dynamic = ["version"]
+
+dependencies = [
+  "numpy >=1.26.0, <2.0 ; python_version >= '3.10' and python_version < '3.11'",
+  "numpy >=2.2.0, <3.0 ; python_version >= '3.11' and python_version < '3.15'",
+  "scipy >=1.13.0, <1.17.0 ; python_version >= '3.10' and python_version < '3.11'",
+  "scipy >=1.17.0, <2.0 ; python_version >= '3.11' and python_version < '3.15'",
+  "qosst-hal @ git+https://github.com/qosst/qosst-hal@dev",
+  "falcon-digital-signature >= 0.9.3, <3.0",
+  "toml >= 0.10.2",
+  "requests >= 2.27.1",
 ]
-scipy = [
-  { version = "^1.13.0", python = ">=3.9, <3.10" },
-  { version = "^1.15.0", python = ">=3.10, <3.14" },
-]
-#qosst-hal = "^0.10.0"
-qosst-hal = { git = "https://github.com/qosst/qosst-hal", branch = "dev" }
-falcon-digital-signature = "^0.9.3"
-toml = "^0.10.2"
-requests = "^2.27.1"
-importlib-metadata = { version = "*", python = "<3.8" }
+
+[project.urls]
+homepage = "https://github.com/qosst"
+repository = "https://github.com/qosst/qosst-core"
+documentation = "https://qosst-core.readthedocs.io/"
+
+[project.scripts]
+qosst = "qosst_core.commands:main"
+
+[tool.poetry]
+version = "0.10.4.dev2"
+include = ["qosst_core/configuration/config.example.toml"]
+packages = [{ include = "qosst_core" }, { include = "qosst_core/py.typed" }]
 
 [tool.poetry.group.dev.dependencies]
-Sphinx = [
-  { version = "^5.0.0", python = ">=3.9, <3.10" },
-  { version = "^8.1.0", python = ">=3.10, <3.14" },
-]
-sphinx-rtd-theme = [
-  { version = "^1.0.0", python = ">=3.9, <3.10" },
-  { version = "^3.0.0", python = ">=3.10, <3.14" },
-]
+Sphinx = "^8.1.0"
+sphinx-rtd-theme = "^3.0.0"
 docstr-coverage = "^2.2.0"
-myst-parser = [
-  { version = "^1.0.0", python = ">=3.9, <3.10" },
-  { version = "^4.0.0", python = ">=3.10, <3.14" },
-]
+myst-parser = "^4.0.0"
 sphinx-prompt = "^1.5.0"
 sphinx-argparse-cli = "^1.11.0"
 sphinxcontrib-programoutput = "^0.17"
 matplotlib = "^3.5.1"
-setuptools = "^67.6.1"
+setuptools = "^82.0.1"
 mypy = "^1.3.0"
-pylint = "^3.3.0"
-black = "^23.9.1"
-
-[tool.poetry.scripts]
-qosst = "qosst_core.commands:main"
+pylint = "^4.0.5"
+black = "^26.3.1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0", "setuptools", "wheel"]
