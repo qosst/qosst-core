@@ -460,6 +460,7 @@ class BobDSPConfiguration(BaseConfiguration):
     phase_estimator: Type[PhaseEstimator]  #: Phase estimator to use.
     linewidth: float  #: Linewidth of the laser, in Hz. This is used for the phase recovery.
     timing_recovery_estimator: Type[TimingRecoveryEstimator]  #: Timing recovery estimator to use.
+    pulsed_sampling: bool  #: Whether to use pulsed sampling in timing recovery. If true, the signal is sampled at a higher rate and then resampled at the optimal sampling time. If false, the signal is directly sampled at the optimal sampling time.
 
     DEFAULT_DEBUG: bool = True  #: Default value fot the debug mode.
     DEFAULT_DIRECT_PILOT_TRACKING: bool = False
@@ -485,10 +486,11 @@ class BobDSPConfiguration(BaseConfiguration):
     DEFAULT_PHASE_ESTIMATOR_STR: str = (
         "qosst_bob.dsp.phase_estimation.ClassicalPhaseEstimator"  #: Default phase estimator.
     )
-    DEFAULT_LINEWIDTH: float = 5e3  #: Default value for the linewidth of the laser, in Hz.
+    DEFAULT_LINEWIDTH: float = 100  #: Default value for the linewidth of the laser, in Hz.
     DEFAULT_TIMING_RECOVERY_ESTIMATOR_STR: str = (
         "qosst_bob.dsp.timing_recovery.BestSamplingPointTimingRecovery"  #: Default timing recovery estimator.
     )
+    DEFAULT_PULSED_SAMPLING: bool = False  #: Default value for the use of pulsed sampling in timing recovery.
 
     def from_dict(self, config: dict) -> None:
         """Read configuration from dict.
@@ -565,6 +567,7 @@ class BobDSPConfiguration(BaseConfiguration):
             raise InvalidConfiguration(
                 f"Cannot load the timing recovery estimator class {timing_recovery_estimator_str}."
             ) from exc
+        self.pulsed_sampling = config.get("pulsed_sampling", self.DEFAULT_PULSED_SAMPLING)
 
     def __str__(self) -> str:
         res = "Bob DSP Configuration\n"
@@ -589,6 +592,7 @@ class BobDSPConfiguration(BaseConfiguration):
         res += f"Phase estimator : {self.phase_estimator}\n"
         res += f"Linewidth : {self.linewidth} Hz\n"
         res += f"Timing recovery estimator : {self.timing_recovery_estimator}\n"
+        res += f"Pulsed sampling : {self.pulsed_sampling}\n"
         res += "\n"
         res += str(self.equalizer)
         return res

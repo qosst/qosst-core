@@ -17,10 +17,11 @@ class PhaseEstimator(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def estimate_phase(self) -> np.ndarray:
+    def estimate_phase(self, **kwargs) -> np.ndarray:
         """
         Estimate the phase.
 
         Returns:
             np.ndarray: the estimated phase.
         """
+        pass

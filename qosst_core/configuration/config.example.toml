@@ -599,6 +599,14 @@ elec_shot_noise_estimation_ratio = 1.0
 # Default : "qosst_bob.dsp.phase_estimation.ClasicalPhaseEstimator"
 phase_estimator = "qosst_bob.dsp.phase_estimation.ClasicalPhaseEstimator"
 
+# Timing recovery estimator to use for the timing recovery.
+# Default : "qosst_bob.dsp.timing_recovery.BestSamplingPointTimingRecovery"
+timing_recovery_estimator = "qosst_bob.dsp.timing_recovery.BestSamplingPointTimingRecovery"
+
+# Pulsed sampling for timing recovery.
+# Default : false
+pulsed_sampling = false
+
 [bob.dsp.equalizer]
 
 # If true, use the CMA equalizer.

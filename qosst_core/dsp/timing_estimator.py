@@ -17,10 +17,11 @@ class TimingRecoveryEstimator(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def sample(self) -> np.ndarray:
+    def sample(self, **kwargs) -> np.ndarray:
         """
         Estimate the timing.
 
         Returns:
             np.ndarray: the estimated timing.
         """
+        pass
