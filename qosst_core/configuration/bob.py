@@ -39,6 +39,8 @@ from qosst_core.utils import get_object_by_import_path
 from qosst_core.skr_computations import BaseCVQKDSKRCalculator
 from qosst_core.parameters_estimation import BaseEstimator
 from qosst_core.schema.detection import DetectionSchema
+from qosst_core.dsp.phase_estimator import PhaseEstimator
+from qosst_core.dsp.timing_estimator import TimingRecoveryEstimator
 
 logger = logging.getLogger(__name__)
 
@@ -452,6 +454,9 @@ class BobDSPConfiguration(BaseConfiguration):
     )
     elec_noise_estimation_ratio: float  #: Ratio of the total number of electronic noise samples to use for the variance estimation
     elec_shot_noise_estimation_ratio: float  #: Ratio of the total number of electronic and shot noise samples to use for the variance estimation
+    phase_estimator: Type[PhaseEstimator]  #: Phase estimator to use.
+    linewidth: float  #: Linewidth of the laser, in Hz. This is used for the phase recovery.
+    timing_recovery_estimator: Type[TimingRecoveryEstimator]  #: Timing recovery estimator to use.
 
     DEFAULT_DEBUG: bool = True  #: Default value fot the debug mode.
     DEFAULT_DIRECT_PILOT_TRACKING: bool = False
@@ -478,6 +483,13 @@ class BobDSPConfiguration(BaseConfiguration):
     DEFAULT_SYMBOL_TIMING_OVERSAMPLING: int = 1
     DEFAULT_ELEC_NOISE_ESTIMATION_RATIO: float = 1.0
     DEFAULT_ELEC_SHOT_NOISE_ESTIMATION_RATIO: float = 1.0
+    DEFAULT_PHASE_ESTIMATOR_STR: str = (
+        "qosst_bob.dsp.phase_estimation.ClassicalPhaseEstimator"  #: Default phase estimator.
+    )
+    DEFAULT_LINEWIDTH: float = 5e3  #: Default value for the linewidth of the laser, in Hz.
+    DEFAULT_TIMING_RECOVERY_ESTIMATOR_STR: str = (
+        "qosst_bob.dsp.timing_recovery.BestSamplingPointTimingRecovery"  #: Default timing recovery estimator.
+    )
 
     def from_dict(self, config: dict) -> None:
         """Read configuration from dict.
@@ -537,6 +549,21 @@ class BobDSPConfiguration(BaseConfiguration):
             "elec_shot_noise_estimation_ratio",
             self.DEFAULT_ELEC_SHOT_NOISE_ESTIMATION_RATIO,
         )
+        phase_estimator_str = config.get("phase_estimator", self.DEFAULT_PHASE_ESTIMATOR_STR)
+        try:
+            self.phase_estimator = get_object_by_import_path(phase_estimator_str)
+        except ImportError as exc:
+            raise InvalidConfiguration(
+                f"Cannot load the phase estimator class {phase_estimator_str}."
+            ) from exc
+        self.linewidth = config.get("linewidth", self.DEFAULT_LINEWIDTH)
+        timing_recovery_estimator_str = config.get("timing_recovery_estimator", self.DEFAULT_TIMING_RECOVERY_ESTIMATOR_STR)
+        try:
+            self.timing_recovery_estimator = get_object_by_import_path(timing_recovery_estimator_str)
+        except ImportError as exc:
+            raise InvalidConfiguration(
+                f"Cannot load the timing recovery estimator class {timing_recovery_estimator_str}."
+            ) from exc
 
     def __str__(self) -> str:
         res = "Bob DSP Configuration\n"
@@ -560,6 +587,9 @@ class BobDSPConfiguration(BaseConfiguration):
         res += f"Symbol timing oversampling : {self.symbol_timing_oversampling}\n"
         res += f"Ratio of number of samples for electronic noise estimation : {self.elec_noise_estimation_ratio}\n"
         res += f"Ratio of number of samples for electronic and shot noise estimation : {self.elec_shot_noise_estimation_ratio}\n"
+        res += f"Phase estimator : {self.phase_estimator}\n"
+        res += f"Linewidth : {self.linewidth} Hz\n"
+        res += f"Timing recovery estimator : {self.timing_recovery_estimator}\n"
         res += "\n"
         res += str(self.equalizer)
         return res
