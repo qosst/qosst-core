@@ -19,6 +19,7 @@ Definition of BaseCVQKDSKRCalculator for qosst_skr.
 
 Definition of NoneSKRCalculator for the configuration.
 """
+
 import abc
 
 

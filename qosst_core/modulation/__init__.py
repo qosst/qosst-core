@@ -40,6 +40,7 @@ Here are some examples of use
     pqm = PCSQAMModulation(variance=5, modulation_size=1024, nu=0.5)
     points = PCSQAMModulation(size=100000)
 """
+
 from .modulation import Modulation
 
 from .gaussian import GaussianModulation

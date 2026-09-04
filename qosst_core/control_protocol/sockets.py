@@ -17,6 +17,7 @@
 """
 Network sockets for the QOSST control protocol.
 """
+
 import abc
 import socket
 import json
@@ -430,7 +431,7 @@ class QOSSTServer(QOSSTSocket):
                     and key.fileobj == self.host_socket
                 ):
                     acceptable = True
-        (self.socket, self.client_address) = self.host_socket.accept()
+        self.socket, self.client_address = self.host_socket.accept()
         self.host_socket.setblocking(True)
         self.selector.unregister(self.host_socket)
         logger.info("Client with address %s has connected", self.client_address)

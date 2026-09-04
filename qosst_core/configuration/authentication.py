@@ -17,6 +17,7 @@
 """
 Class for Authentication Configuration.
 """
+
 import logging
 import re
 import json

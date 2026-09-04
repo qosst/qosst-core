@@ -17,6 +17,7 @@
 """
 QOSST core module for authentication. Contains the BaseAuthenticator class along with some implementations.
 """
+
 from .base import BaseAuthenticator, NoneAuthenticator
 
 from .falcon import FalconAuthenticator

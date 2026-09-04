@@ -17,6 +17,7 @@
 """
 Configuration for the clock section.
 """
+
 from qosst_core.configuration.exceptions import InvalidClockMaster
 from qosst_core.configuration.base import BaseConfiguration
 from qosst_core.participant import Participant

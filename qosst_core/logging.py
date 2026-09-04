@@ -16,9 +16,10 @@
 
 """
 qosst-core module for logging. In particular, it contains
-a function to go from the verbosity level to the log level and 
+a function to go from the verbosity level to the log level and
 a function to create loggers.
 """
+
 import logging
 from typing import Tuple, Optional
 

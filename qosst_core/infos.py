@@ -17,6 +17,7 @@
 """
 File containing the logo (motd) and two utils function to print the motd and basic information.
 """
+
 import sys
 from typing import Optional
 

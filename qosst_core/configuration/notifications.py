@@ -17,6 +17,7 @@
 """
 Class for notifications Configuration.
 """
+
 import logging
 from typing import Dict, Type
 

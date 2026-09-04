@@ -17,6 +17,7 @@
 """
 Configuration for Alice section.
 """
+
 from typing import Dict, Type, Any
 import logging
 from warnings import warn
@@ -149,7 +150,7 @@ class AliceDACConfiguration(BaseConfiguration):
     amplitude: float  #: Amplitude of the DAC, in V.
     device: Type[GenericDAC]  #: Device class of the DAC.
     channels: list  #: List of channels to use.
-    location: Any #: Location of the device
+    location: Any  #: Location of the device
     extra_args: dict  #: Extra args to pass to the DAC class.
 
     DEFAULT_LOCATION: str = ""  #: Default location

@@ -17,6 +17,7 @@
 """
 QAM modulation.
 """
+
 from itertools import product
 import numpy as np
 

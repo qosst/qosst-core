@@ -17,6 +17,7 @@
 """
 Gaussian modulation.
 """
+
 import numpy as np
 
 from .modulation import Modulation

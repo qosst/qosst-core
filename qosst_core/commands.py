@@ -19,6 +19,7 @@ This file will contain the code for script interactions.
 
 It will call commands for the submodules.
 """
+
 import argparse
 import code
 from typing import Optional

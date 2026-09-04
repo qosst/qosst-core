@@ -19,6 +19,7 @@ Definition of BaseEstimator for qosst_bob.
 
 Definition of NoneEstimator for the configuration.
 """
+
 import abc
 from typing import Tuple
 

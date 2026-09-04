@@ -17,6 +17,7 @@
 """
 Abstract class for QOSST Configuration.
 """
+
 import abc
 from typing import Dict
 

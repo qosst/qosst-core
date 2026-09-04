@@ -17,6 +17,7 @@
 """
 Class for authentication using the Falcon algorithm (PQC)
 """
+
 import logging
 import os
 import json

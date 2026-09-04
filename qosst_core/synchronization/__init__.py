@@ -33,6 +33,7 @@ Here are some examples of use
     sequence = mls.sequence()
 
 """
+
 from .synchronization import SynchronizationSequence
 
 from .zc import ZadoffChuSequence

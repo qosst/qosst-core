@@ -17,6 +17,7 @@
 """
 PSK modulation.
 """
+
 import numpy as np
 
 from qosst_core.modulation.modulation import DiscreteModulation

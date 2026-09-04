@@ -23,4 +23,5 @@ It contains :
     * commands to create and check a configuration file, that can be called from the qosst entrypoint;
     * and the basic configuration example file.
 """
+
 from .config import Configuration

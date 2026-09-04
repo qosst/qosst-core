@@ -18,6 +18,7 @@
 """
 Configuration for Bob section.
 """
+
 from typing import Type, Any, List, Tuple, Dict
 import logging
 
@@ -428,9 +429,7 @@ class BobDSPConfiguration(BaseConfiguration):
     tone_filtering_cutoff: (
         float  #: Cutoff for the FIR filter for the filtering of the pilot tone.
     )
-    direct_pilot_tracking: (
-        bool  #: Whether the first pilot can directly be used to estimate beat frequency and phase noise. Defaults to False.
-    )
+    direct_pilot_tracking: bool  #: Whether the first pilot can directly be used to estimate beat frequency and phase noise. Defaults to False.
     process_subframes: bool
     subframes_size: int  # Size of DSP processing block
     subframes_subdivisions: int  # Subdivision of a subframe, for phase recovery
@@ -447,9 +446,7 @@ class BobDSPConfiguration(BaseConfiguration):
     num_samples_pilot_search: (
         int  #: Number of samples to estimate the frequency of the pilots.
     )
-    symbol_timing_oversampling: (
-        int  #: By which factor the signal is oversampled when searching for the optimal symbol sampling time.
-    )
+    symbol_timing_oversampling: int  #: By which factor the signal is oversampled when searching for the optimal symbol sampling time.
     equalizer: (
         BobDSPEqualizerConfiguration  #: The equalizer part of Bob's DSP configuration
     )
@@ -470,8 +467,12 @@ class BobDSPConfiguration(BaseConfiguration):
     DEFAULT_EXCLUSION_ZONE_PILOTS: List[List[float]] = [
         [0.0, 100e3]
     ]  #: Default value for the exclusion zone for the search of the pilots.
-    DEFAULT_PILOT_PHASE_FILTERING_SIZE: int = 0 #: Default value for the filtering size of the phase for the phase recovery.
-    DEFAULT_PILOT_FREQUENCY_FILTERING_SIZE: int = 0 #: Default value for the filtering size of the phase for the phase recovery.
+    DEFAULT_PILOT_PHASE_FILTERING_SIZE: int = (
+        0  #: Default value for the filtering size of the phase for the phase recovery.
+    )
+    DEFAULT_PILOT_FREQUENCY_FILTERING_SIZE: int = (
+        0  #: Default value for the filtering size of the phase for the phase recovery.
+    )
     DEFAULT_NUM_SAMPLES_FBEAT_ESTIMATION: int = 100000
     DEFAULT_NUM_SAMPLES_PILOT_SEARCH: int = 10_000_000
     DEFAULT_SYMBOL_TIMING_OVERSAMPLING: int = 1
@@ -500,18 +501,14 @@ class BobDSPConfiguration(BaseConfiguration):
         self.process_subframes = config.get(
             "process_subframes", self.DEFAULT_PROCESS_SUBFRAMES
         )
-        self.subframes_size = config.get(
-            "subframes_size", self.DEFAULT_SUBFRAMES_SIZE
-        )
+        self.subframes_size = config.get("subframes_size", self.DEFAULT_SUBFRAMES_SIZE)
         self.subframes_subdivisions = config.get(
             "subframes_subdivisions", self.DEFAULT_SUBFRAMES_SUBDIVISIONS
         )
         self.abort_clock_recovery = config.get(
             "abort_clock_recovery", self.DEFAULT_ABORT_CLOCK_RECOVERY
         )
-        self.alice_dac_rate = config.get(
-            "alice_dac_rate", self.DEFAULT_ALICE_DAC_RATE
-        )
+        self.alice_dac_rate = config.get("alice_dac_rate", self.DEFAULT_ALICE_DAC_RATE)
         exclusion = config.get(
             "exclusion_zone_pilots", self.DEFAULT_EXCLUSION_ZONE_PILOTS
         )
@@ -520,7 +517,8 @@ class BobDSPConfiguration(BaseConfiguration):
             "pilot_phase_filtering_size", self.DEFAULT_PILOT_PHASE_FILTERING_SIZE
         )
         self.pilot_frequency_filtering_size = config.get(
-            "pilot_frequency_filtering_size", self.DEFAULT_PILOT_FREQUENCY_FILTERING_SIZE
+            "pilot_frequency_filtering_size",
+            self.DEFAULT_PILOT_FREQUENCY_FILTERING_SIZE,
         )
         self.num_samples_fbeat_estimation = config.get(
             "num_samples_fbeat_estimation", self.DEFAULT_NUM_SAMPLES_FBEAT_ESTIMATION
@@ -536,7 +534,8 @@ class BobDSPConfiguration(BaseConfiguration):
             "elec_noise_estimation_ratio", self.DEFAULT_ELEC_NOISE_ESTIMATION_RATIO
         )
         self.elec_shot_noise_estimation_ratio = config.get(
-            "elec_shot_noise_estimation_ratio", self.DEFAULT_ELEC_SHOT_NOISE_ESTIMATION_RATIO
+            "elec_shot_noise_estimation_ratio",
+            self.DEFAULT_ELEC_SHOT_NOISE_ESTIMATION_RATIO,
         )
 
     def __str__(self) -> str:
@@ -553,7 +552,9 @@ class BobDSPConfiguration(BaseConfiguration):
         res += f"Alice DAC rate : {self.alice_dac_rate}\n"
         res += f"Exclusion zone : {self.exclusion_zone_pilots}\n"
         res += f"Pilot phase filtering size : {self.pilot_phase_filtering_size}\n"
-        res += f"Pilot frequency filtering size : {self.pilot_frequency_filtering_size}\n"
+        res += (
+            f"Pilot frequency filtering size : {self.pilot_frequency_filtering_size}\n"
+        )
         res += f"Number of samples for fbeat estimation : {self.num_samples_fbeat_estimation}\n"
         res += f"Number of samples for pilot search : {self.num_samples_pilot_search}\n"
         res += f"Symbol timing oversampling : {self.symbol_timing_oversampling}\n"
