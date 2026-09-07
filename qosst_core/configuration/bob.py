@@ -39,8 +39,8 @@ from qosst_core.utils import get_object_by_import_path
 from qosst_core.skr_computations import BaseCVQKDSKRCalculator
 from qosst_core.parameters_estimation import BaseEstimator
 from qosst_core.schema.detection import DetectionSchema
-from qosst_core.dsp.phase_estimator import PhaseEstimator
-from qosst_core.dsp.timing_estimator import TimingRecoveryEstimator
+from qosst_core.dsp.phase_estimator import BasePhaseEstimator
+from qosst_core.dsp.timing_estimator import BaseTimingRecoveryEstimator
 
 logger = logging.getLogger(__name__)
 
@@ -454,9 +454,13 @@ class BobDSPConfiguration(BaseConfiguration):
     )
     elec_noise_estimation_ratio: float  #: Ratio of the total number of electronic noise samples to use for the variance estimation
     elec_shot_noise_estimation_ratio: float  #: Ratio of the total number of electronic and shot noise samples to use for the variance estimation
-    phase_estimator: Type[PhaseEstimator]  #: Phase estimator to use.
-    linewidth: float  #: Linewidth of the laser, in Hz. This is used for the phase recovery.
-    timing_recovery_estimator: Type[TimingRecoveryEstimator]  #: Timing recovery estimator to use.
+    phase_estimator: Type[BasePhaseEstimator]  #: Phase estimator to use.
+    linewidth: (
+        float  #: Linewidth of the laser, in Hz. This is used for the phase recovery.
+    )
+    timing_recovery_estimator: Type[
+        BaseTimingRecoveryEstimator
+    ]  #: Timing recovery estimator to use.
 
     DEFAULT_DEBUG: bool = True  #: Default value fot the debug mode.
     DEFAULT_DIRECT_PILOT_TRACKING: bool = False
@@ -484,11 +488,13 @@ class BobDSPConfiguration(BaseConfiguration):
     DEFAULT_ELEC_NOISE_ESTIMATION_RATIO: float = 1.0
     DEFAULT_ELEC_SHOT_NOISE_ESTIMATION_RATIO: float = 1.0
     DEFAULT_PHASE_ESTIMATOR_STR: str = (
-        "qosst_bob.dsp.phase_estimation.ClassicalPhaseEstimator"  #: Default phase estimator.
+        "qosst_core.dsp.phase_estimation.NonePhaseEstimator"  #: Default phase estimator.
     )
-    DEFAULT_LINEWIDTH: float = 5e3  #: Default value for the linewidth of the laser, in Hz.
+    DEFAULT_LINEWIDTH: float = (
+        5e3  #: Default value for the linewidth of the laser, in Hz.
+    )
     DEFAULT_TIMING_RECOVERY_ESTIMATOR_STR: str = (
-        "qosst_bob.dsp.timing_recovery.BestSamplingPointTimingRecovery"  #: Default timing recovery estimator.
+        "qosst_core.dsp.timing_recovery.NoneTimingRecoveryEstimator"  #: Default timing recovery estimator.
     )
 
     def from_dict(self, config: dict) -> None:
@@ -549,7 +555,9 @@ class BobDSPConfiguration(BaseConfiguration):
             "elec_shot_noise_estimation_ratio",
             self.DEFAULT_ELEC_SHOT_NOISE_ESTIMATION_RATIO,
         )
-        phase_estimator_str = config.get("phase_estimator", self.DEFAULT_PHASE_ESTIMATOR_STR)
+        phase_estimator_str = config.get(
+            "phase_estimator", self.DEFAULT_PHASE_ESTIMATOR_STR
+        )
         try:
             self.phase_estimator = get_object_by_import_path(phase_estimator_str)
         except ImportError as exc:
@@ -557,9 +565,13 @@ class BobDSPConfiguration(BaseConfiguration):
                 f"Cannot load the phase estimator class {phase_estimator_str}."
             ) from exc
         self.linewidth = config.get("linewidth", self.DEFAULT_LINEWIDTH)
-        timing_recovery_estimator_str = config.get("timing_recovery_estimator", self.DEFAULT_TIMING_RECOVERY_ESTIMATOR_STR)
+        timing_recovery_estimator_str = config.get(
+            "timing_recovery_estimator", self.DEFAULT_TIMING_RECOVERY_ESTIMATOR_STR
+        )
         try:
-            self.timing_recovery_estimator = get_object_by_import_path(timing_recovery_estimator_str)
+            self.timing_recovery_estimator = get_object_by_import_path(
+                timing_recovery_estimator_str
+            )
         except ImportError as exc:
             raise InvalidConfiguration(
                 f"Cannot load the timing recovery estimator class {timing_recovery_estimator_str}."

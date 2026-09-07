@@ -19,7 +19,6 @@ Generic synchronization sequence.
 """
 
 import abc
-from typing import Optional
 
 import numpy as np
 

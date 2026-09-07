@@ -20,8 +20,9 @@ Maximum Length Sequence for synchronization
 
 import numpy as np
 
-from qosst_core.synchronization.synchronization import SynchronizationSequence
 from scipy.signal import max_len_seq
+
+from qosst_core.synchronization.synchronization import SynchronizationSequence
 
 
 class MaximumLengthSequence(SynchronizationSequence):
