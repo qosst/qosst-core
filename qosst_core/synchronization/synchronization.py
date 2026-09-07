@@ -24,7 +24,7 @@ import numpy as np
 
 
 # pylint: disable=too-few-public-methods
-class SynchronizationSequence(abc.ABC):
+class BaseSynchronizationSequence(abc.ABC):
     """
     Abstract class for the synchronization sequence.
     """

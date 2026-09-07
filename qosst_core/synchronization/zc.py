@@ -20,11 +20,11 @@ Zadoff-Chu synchronization sequence
 
 import numpy as np
 
-from qosst_core.synchronization.synchronization import SynchronizationSequence
+from qosst_core.synchronization.synchronization import BaseSynchronizationSequence
 from qosst_core.comm.zc import zcsequence
 
 
-class ZadoffChuSequence(SynchronizationSequence):
+class ZadoffChuSequence(BaseSynchronizationSequence):
     """
     Zadoff-Chu synchronization sequence.
     """

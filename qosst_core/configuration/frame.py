@@ -25,7 +25,7 @@ import logging
 import numpy as np
 
 from qosst_core.modulation import Modulation
-from qosst_core.synchronization import SynchronizationSequence
+from qosst_core.synchronization import BaseSynchronizationSequence
 from qosst_core.configuration.exceptions import InvalidConfiguration
 from qosst_core.configuration.base import BaseConfiguration
 from qosst_core.utils import get_object_by_import_path
@@ -169,7 +169,7 @@ class FrameSynchronizationConfiguration(BaseConfiguration):
     """
 
     synchronization_cls: Type[
-        SynchronizationSequence
+        BaseSynchronizationSequence
     ]  #: Synchronization sequence class.
     zc_root: int  #: Root value for the Zadoff-Chu Sequence.
     zc_length: int  #: Length of the Zadoff-Chu sequence.
@@ -200,7 +200,7 @@ class FrameSynchronizationConfiguration(BaseConfiguration):
             InvalidConfiguration: If the root and length of the Zadoff-Chu sequence are not coprimes.
             InvalidConfiguration: If the rate is less than zero.
             InvalidConfiguration: If the amplitude is not between 0 and 1.
-            InvalidConfiguration: If the given synchronization class is not a subclass of :class:`~qosst_core.synchronization.SynchronizationSequence`
+            InvalidConfiguration: If the given synchronization class is not a subclass of :class:`~qosst_core.synchronization.BaseSynchronizationSequence`
             InvalidConfiguration: If the synchronization class does not exist in `qosst_core.syncrhonization`.
         """
         self.zc_root = config.get("zc_root", self.DEFAULT_ZC_ROOT)
@@ -218,7 +218,7 @@ class FrameSynchronizationConfiguration(BaseConfiguration):
                 f"Cannot load synchronization sequence class {synchronization_str}."
             ) from exc
 
-        if not issubclass(self.synchronization_cls, SynchronizationSequence):
+        if not issubclass(self.synchronization_cls, BaseSynchronizationSequence):
             raise InvalidConfiguration(
                 f"The synchronization class {synchronization_str} is not a subclass of qosst_core.synchronization.SinchronizationSequence."
             )

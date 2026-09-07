@@ -22,10 +22,10 @@ import numpy as np
 
 from scipy.signal import max_len_seq
 
-from qosst_core.synchronization.synchronization import SynchronizationSequence
+from qosst_core.synchronization.synchronization import BaseSynchronizationSequence
 
 
-class MaximumLengthSequence(SynchronizationSequence):
+class MaximumLengthSequence(BaseSynchronizationSequence):
     """
     Maximum Length Sequence class.
     """
