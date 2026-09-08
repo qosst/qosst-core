@@ -495,7 +495,7 @@ location = ""
 
 [bob.polarisation_recovery.powermeter]
 
-# The class of powermter to use.
+# The class of powermeter to use.
 # This should be a valid class, inheriting from qosst_hal.powermeter.GenericPowerMeter.
 # Default : "qosst_hal.powermeter.FakePowerMeter"
 device = "qosst_hal.powermeter.FakePowerMeter"
@@ -510,16 +510,15 @@ timeout = 10
 
 [bob.dsp]
 
+# DSP class to use.
+# This should be a valid class, inheriting from qosst_core.dsp.base.BaseDSP.
+# Default : "qosst_core.dsp.base.NoneDSP"
+dsp_class = "qosst_core.dsp.base.NoneDSP"
+
 # Debug mode.
 # If True, a DSPDebug object is returned with additional information.
 # Default : true
 debug = true
-
-# Direct pilot tracking.
-# If True, the first pilot can directly be used to estimate beat frequency
-# and phase noise
-# Default : false
-direct_pilot_tracking = false
 
 # Size for the FIR filters.
 # Default : 500

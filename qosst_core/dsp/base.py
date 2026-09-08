@@ -358,3 +358,15 @@ class BaseDSP(abc.ABC):
                 "Calling get_debug while debug=False in DSP results in getting a None object."
             )
         return self.debug_object
+
+
+class NoneDSP(BaseDSP):
+    """A DSP to be used as the default parameter in the configuration fiel."""
+
+    def _run_dsp(
+        self, data, electronic_noise_data=None, electronic_shot_noise_data=None
+    ):
+        raise NotImplementedError("NoneDSP cannot be used as an actual DSP.")
+
+    def _run_special_dsp(self, electronic_noise_data, electronic_shot_noise_data):
+        raise NotImplementedError("NoneDSP cannot be used as an actual DSP.")

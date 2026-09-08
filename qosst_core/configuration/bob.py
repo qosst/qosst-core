@@ -41,6 +41,7 @@ from qosst_core.parameters_estimation import BaseEstimator
 from qosst_core.schema.detection import DetectionSchema
 from qosst_core.dsp.phase_estimator import BasePhaseEstimator
 from qosst_core.dsp.timing_estimator import BaseTimingRecoveryEstimator
+from qosst_core.dsp.base import BaseDSP
 
 logger = logging.getLogger(__name__)
 
@@ -426,12 +427,12 @@ class BobDSPConfiguration(BaseConfiguration):
     Class holding DSP configuration for Bob. It should correspond to the bob.dsp section.
     """
 
+    dsp_class: Type[BaseDSP]  #: DSP class to use.
     debug: bool  #: Debug mode.
     fir_size: int
     tone_filtering_cutoff: (
         float  #: Cutoff for the FIR filter for the filtering of the pilot tone.
     )
-    direct_pilot_tracking: bool  #: Whether the first pilot can directly be used to estimate beat frequency and phase noise. Defaults to False.
     subframes_size: int  # Size of DSP processing block
     subframes_subdivisions: int  # Subdivision of a subframe, for phase recovery
     abort_clock_recovery: float  #: Maximal value of clock mismatch allowed to be found by clock recovery algorithm.
@@ -461,8 +462,8 @@ class BobDSPConfiguration(BaseConfiguration):
         BaseTimingRecoveryEstimator
     ]  #: Timing recovery estimator to use.
 
+    DEFAULT_DSP_CLASS_STR: str = "qosst_core.dsp.base.NoneDSP"  #: Default DSP class.
     DEFAULT_DEBUG: bool = True  #: Default value fot the debug mode.
-    DEFAULT_DIRECT_PILOT_TRACKING: bool = False
     DEFAULT_FIR_SIZE: int = 500
     DEFAULT_TONE_FILTERING_CUTOFF: float = (
         10e6  #: Default value for the cutoff of the FIR filter for the filtering of the tone.
@@ -506,10 +507,20 @@ class BobDSPConfiguration(BaseConfiguration):
                 "bob.dsp.equalizer is missing from the configuration file. Using default values for all the parameters."
             )
 
+        dsp_class_str = config.get("dsp_class", self.DEFAULT_DSP_CLASS_STR)
+        try:
+            self.dsp_class = get_object_by_import_path(dsp_class_str)
+        except ImportError as exc:
+            raise InvalidConfiguration(
+                f"Cannot load the DSP class {dsp_class_str}."
+            ) from exc
+
+        if not issubclass(self.dsp_class, BaseDSP):
+            raise InvalidConfiguration(
+                f"{dsp_class_str} is not a subclass of qosst_core.dsp.base.BaseDSP."
+            )
+
         self.debug = config.get("debug", self.DEFAULT_DEBUG)
-        self.direct_pilot_tracking = config.get(
-            "direct_pilot_tracking", self.DEFAULT_DIRECT_PILOT_TRACKING
-        )
         self.fir_size = config.get("fir_size", self.DEFAULT_FIR_SIZE)
         self.tone_filtering_cutoff = config.get(
             "tone_filtering_cutoff", self.DEFAULT_TONE_FILTERING_CUTOFF
@@ -550,6 +561,7 @@ class BobDSPConfiguration(BaseConfiguration):
             "elec_shot_noise_estimation_ratio",
             self.DEFAULT_ELEC_SHOT_NOISE_ESTIMATION_RATIO,
         )
+
         phase_estimator_str = config.get(
             "phase_estimator", self.DEFAULT_PHASE_ESTIMATOR_STR
         )
@@ -559,6 +571,12 @@ class BobDSPConfiguration(BaseConfiguration):
             raise InvalidConfiguration(
                 f"Cannot load the phase estimator class {phase_estimator_str}."
             ) from exc
+
+        if not issubclass(self.phase_estimator, BasePhaseEstimator):
+            raise InvalidConfiguration(
+                f"{phase_estimator_str} is not a subclass of qosst_core.dsp.phase_estimator.BasePhaseEstimator."
+            )
+
         self.linewidth = config.get("linewidth", self.DEFAULT_LINEWIDTH)
         timing_recovery_estimator_str = config.get(
             "timing_recovery_estimator", self.DEFAULT_TIMING_RECOVERY_ESTIMATOR_STR
@@ -572,10 +590,15 @@ class BobDSPConfiguration(BaseConfiguration):
                 f"Cannot load the timing recovery estimator class {timing_recovery_estimator_str}."
             ) from exc
 
+        if not issubclass(self.timing_recovery_estimator, BaseTimingRecoveryEstimator):
+            raise InvalidConfiguration(
+                f"{timing_recovery_estimator_str} is not a subclass of qosst_core.dsp.timing_estimator.BaseTimingRecoveryEstimator."
+            )
+
     def __str__(self) -> str:
         res = "Bob DSP Configuration\n"
         res += "---------------------\n"
-        res += f"Direct pilot tracking : {self.direct_pilot_tracking}\n"
+        res += f"DSP class : {self.dsp_class}\n"
         res += f"Debug : {self.debug}\n"
         res += f"FIR size : {self.fir_size}\n"
         res += f"Tone filtering cut-off: {self.tone_filtering_cutoff}\n"
