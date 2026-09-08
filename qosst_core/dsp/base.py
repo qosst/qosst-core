@@ -94,6 +94,9 @@ class BaseDSP(abc.ABC):
         int  #: Rolling average filter size for the pilots (frequency).
     )
     symbol_timing_oversampling: int  #: Factor by which the signal is oversampled when searching for the optimal symbol sampling time
+    num_samples_fbeat_estimation: (
+        float  #: Number of samples for estimating the beat frequency.
+    )
     num_samples_pilot_search: (
         int  #: number of samples for estimating the frequency of pilots.
     )
@@ -135,6 +138,7 @@ class BaseDSP(abc.ABC):
         pilot_phase_filtering_size: int = 0,
         pilot_frequency_filtering_size: int = 0,
         symbol_timing_oversampling: int = 1,
+        num_samples_fbeat_estimation: int = 100_000,
         num_samples_pilot_search: int = 1_000_000,
         schema: DetectionSchema = SINGLE_POLARISATION_RF_HETERODYNE,
         debug: bool = False,
@@ -169,6 +173,7 @@ class BaseDSP(abc.ABC):
             pilot_phase_filtering_size (int, optional): size of the uniform1d filter to filter the phase correction. Defaults to 0.
             pilot_frequency_filtering_size (int, optional): size of the uniform1d filter to filter the phase correction. Defaults to 0.
             symbol_timing_oversampling (int, optional): by which factor the signal is oversampled when searching for the optimal symbol sampling time. Defaults to 1.
+            num_samples_fbeat_estimation (int, optional): number of samples to estimate the beat frequency between the two lasers. Defaults to 100_000.
             num_samples_pilot_search (int, optional): number of samples to estimate the frequency of pilots. Defaults to 10000000.
             schema (DetectionSchema, optional): detection schema to use for the DSP. Defaults to qosst_core.schema.emission.SINGLE_POLARISATION_RF_HETERODYNE.
             debug (bool, optional): if True, the DSPDebug object is returned. Defaults to False.
@@ -201,6 +206,7 @@ class BaseDSP(abc.ABC):
         self.pilot_phase_filtering_size = pilot_phase_filtering_size
         self.pilot_frequency_filtering_size = pilot_frequency_filtering_size
         self.symbol_timing_oversampling = symbol_timing_oversampling
+        self.num_samples_fbeat_estimation = num_samples_fbeat_estimation
         self.num_samples_pilot_search = num_samples_pilot_search
         self.schema = schema
         self.debug = debug
@@ -242,6 +248,7 @@ class BaseDSP(abc.ABC):
             config.bob.dsp.pilot_phase_filtering_size,
             config.bob.dsp.pilot_frequency_filtering_size,
             config.bob.dsp.symbol_timing_oversampling,
+            config.bob.dsp.num_samples_fbeat_estimation,
             config.bob.dsp.num_samples_pilot_search,
             config.bob.schema,
             config.bob.dsp.debug,

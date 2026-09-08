@@ -18,7 +18,7 @@ classifiers = [
   "Topic :: Security :: Cryptography",
 ]
 requires-python = ">=3.11, <3.15"
-version = "0.10.4.dev6"
+version = "0.10.4.dev7"
 
 dependencies = [
   "numpy >=2.2.0, <3.0",

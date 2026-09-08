@@ -531,13 +531,9 @@ fir_size = 500
 # Default : 10e6
 tone_filtering_cutoff = 10e6
 
-# Set true to process the data in subframes
-# Default : true
-process_subframes = true
-
-# Size of the subframes if process_subframes is true
-# Default : 50000
-subframes_size = 50_000
+# Size of the subframes. Set value to 0 or num_symbols to disable the feature.
+# Default : 0
+subframes_size = 0
 
 # Number of a subdivisions of a subframe.
 # Default: 4

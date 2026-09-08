@@ -432,7 +432,6 @@ class BobDSPConfiguration(BaseConfiguration):
         float  #: Cutoff for the FIR filter for the filtering of the pilot tone.
     )
     direct_pilot_tracking: bool  #: Whether the first pilot can directly be used to estimate beat frequency and phase noise. Defaults to False.
-    process_subframes: bool
     subframes_size: int  # Size of DSP processing block
     subframes_subdivisions: int  # Subdivision of a subframe, for phase recovery
     abort_clock_recovery: float  #: Maximal value of clock mismatch allowed to be found by clock recovery algorithm.
@@ -468,7 +467,6 @@ class BobDSPConfiguration(BaseConfiguration):
     DEFAULT_TONE_FILTERING_CUTOFF: float = (
         10e6  #: Default value for the cutoff of the FIR filter for the filtering of the tone.
     )
-    DEFAULT_PROCESS_SUBFRAMES: bool = True
     DEFAULT_SUBFRAMES_SIZE: int = 50_000
     DEFAULT_SUBFRAMES_SUBDIVISIONS: int = 1
     DEFAULT_ABORT_CLOCK_RECOVERY: float = 0  #: Default value for abort_clock_recovery.
@@ -515,9 +513,6 @@ class BobDSPConfiguration(BaseConfiguration):
         self.fir_size = config.get("fir_size", self.DEFAULT_FIR_SIZE)
         self.tone_filtering_cutoff = config.get(
             "tone_filtering_cutoff", self.DEFAULT_TONE_FILTERING_CUTOFF
-        )
-        self.process_subframes = config.get(
-            "process_subframes", self.DEFAULT_PROCESS_SUBFRAMES
         )
         self.subframes_size = config.get("subframes_size", self.DEFAULT_SUBFRAMES_SIZE)
         self.subframes_subdivisions = config.get(
@@ -584,7 +579,6 @@ class BobDSPConfiguration(BaseConfiguration):
         res += f"Debug : {self.debug}\n"
         res += f"FIR size : {self.fir_size}\n"
         res += f"Tone filtering cut-off: {self.tone_filtering_cutoff}\n"
-        res += f"Process subframes : {self.process_subframes}\n"
         res += f"Subframes size : {self.subframes_size}\n"
         res += f"Subframes subdivisions : {self.subframes_subdivisions}\n"
         res += f"Abort clock recovery : {self.abort_clock_recovery}\n"
