@@ -46,6 +46,9 @@ class BaseDSP(abc.ABC):
         Dict[str, Any]
     ]  #: Debug object returned when calling get_debug.
     parameters_set: bool = False  #: Test if the parameters have been set.
+    special_parameters_set: bool = (
+        False  #: Test of the special parameters have been set.
+    )
 
     # DSP parameters
     symbol_rate: float  #: Symbol rate in Baud.
@@ -287,6 +290,7 @@ class BaseDSP(abc.ABC):
             return None
 
         if self.debug:
+            logger.info("DSP debug mode is on.")
             self.debug_object = {}
         else:
             self.debug_object = None
@@ -313,7 +317,7 @@ class BaseDSP(abc.ABC):
         self,
         electronic_noise_data: List[np.ndarray],
         electronic_shot_noise_data: List[np.ndarray],
-    ) -> Tuple[np.ndarray, np.ndarray]:
+    ) -> Optional[Tuple[np.ndarray, np.ndarray]]:
         """Applies the DSP on the electronic noise and electronic and shot noise.
 
         Args:
@@ -323,6 +327,10 @@ class BaseDSP(abc.ABC):
         Returns:
             Tuple[np.ndarray, np.ndarray]: electronic noise symbols and electronic and shot noise symbols.
         """
+
+        if not self.special_parameters_set:
+            logger.critical("Calling the DSP before the parameters are set.")
+            return None
 
         return self._run_special_dsp(electronic_noise_data, electronic_shot_noise_data)
 
