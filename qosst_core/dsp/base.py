@@ -260,11 +260,18 @@ class BaseDSP(abc.ABC):
         )
 
     @abc.abstractmethod
-    def _run_dsp(self, data: np.ndarray) -> Optional[List[np.ndarray]]:
+    def _run_dsp(
+        self,
+        data: np.ndarray,
+        electronic_noise_data: Optional[List[np.ndarray]] = None,
+        electronic_shot_noise_data: Optional[List[np.ndarray]] = None,
+    ) -> Optional[List[np.ndarray]]:
         """Actually run the digital signal processing stack.
 
         Args:
             data (np.ndarray): data to apply the DSP on.
+            electronic_noise_data (List[np.ndarray], optional): electronic noise data. Maybe be used by some DSPs. Defaults to None.
+            electronic_shot_noise_data (List[np.ndarray], optional): electronic and shot noise data. Maybe be used by some DSPs. Defaults to None.
 
         Returns:
             Optional[List[np.ndarray]]: recovered symbols.
@@ -273,11 +280,15 @@ class BaseDSP(abc.ABC):
     def dsp(
         self,
         data: np.ndarray,
+        electronic_noise_data: Optional[List[np.ndarray]] = None,
+        electronic_shot_noise_data: Optional[List[np.ndarray]] = None,
     ) -> Optional[List[np.ndarray]]:
         """Apply the digital signal processing stack.
 
         Args:
             data (np.ndarray): data to apply the DSP on.
+            electronic_noise_data (List[np.ndarray], optional): electronic noise data. Maybe be used by some DSPs. Defaults to None.
+            electronic_shot_noise_data (List[np.ndarray], optional): electronic and shot noise data. Maybe be used by some DSPs. Defaults to None.
 
         Returns:
             Optional[List[np.ndarray]]: recovered symbols or None.
@@ -295,7 +306,7 @@ class BaseDSP(abc.ABC):
         else:
             self.debug_object = None
 
-        return self._run_dsp(data)
+        return self._run_dsp(data, electronic_noise_data, electronic_shot_noise_data)
 
     @abc.abstractmethod
     def _run_special_dsp(
