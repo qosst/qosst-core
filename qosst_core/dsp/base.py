@@ -100,6 +100,12 @@ class BaseDSP(abc.ABC):
     schema: DetectionSchema  #: Detection schema.
     debug: bool = True  #: Debug mode of the DSP.
 
+    # Special DSP parameters
+    elec_noise_estimation_ratio: (
+        float  #: Ratio for downsampling electronic noise samples for special DSP.
+    )
+    elec_shot_noise_estimation_ratio: float  #: Ratio for downsampling electronic and shot noise samples for special DSP.
+
     # pylint: disable=too-many-arguments,too-many-positional-arguments,too-many-locals
     def set_parameters(
         self,
@@ -132,6 +138,8 @@ class BaseDSP(abc.ABC):
         num_samples_pilot_search: int = 1_000_000,
         schema: DetectionSchema = SINGLE_POLARISATION_RF_HETERODYNE,
         debug: bool = False,
+        elec_noise_estimation_ratio: float = 1.0,
+        elec_shot_noise_estimation_ratio: float = 1.0,
     ):
         """
         Set the parameters of the DSP.
@@ -164,6 +172,8 @@ class BaseDSP(abc.ABC):
             num_samples_pilot_search (int, optional): number of samples to estimate the frequency of pilots. Defaults to 10000000.
             schema (DetectionSchema, optional): detection schema to use for the DSP. Defaults to qosst_core.schema.emission.SINGLE_POLARISATION_RF_HETERODYNE.
             debug (bool, optional): if True, the DSPDebug object is returned. Defaults to False.
+            elec_noise_estimation_ratio (float, optional): Ratio for downsampling electronic noise samples for special DSP. Defaults to 1.
+            elec_shot_noise_estimation_ratio (float, optional): Ratio for downsampling electronic and shot noise samples for special DSP. Defaults to 1.
         """
         self.symbol_rate = symbol_rate
         self.dac_rate = dac_rate
@@ -194,6 +204,8 @@ class BaseDSP(abc.ABC):
         self.num_samples_pilot_search = num_samples_pilot_search
         self.schema = schema
         self.debug = debug
+        self.elec_noise_estimation_ratio = elec_noise_estimation_ratio
+        self.elec_shot_noise_estimation_ratio = elec_shot_noise_estimation_ratio
 
         self.parameters_set = True
 
@@ -233,6 +245,8 @@ class BaseDSP(abc.ABC):
             config.bob.dsp.num_samples_pilot_search,
             config.bob.schema,
             config.bob.dsp.debug,
+            config.bob.dsp.elec_noise_estimation_ratio,
+            config.bob.dsp.elec_shot_noise_estimation_ratio,
         )
 
     @abc.abstractmethod
