@@ -26,6 +26,6 @@ It contains :
 * some constants.
 """
 
-__version__ = "0.10.4.dev11"
+__version__ = "0.10.4.dev12"
 
 RELEASE_NAME = "Karadoc"

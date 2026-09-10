@@ -20,11 +20,10 @@ Generic class for class-based DSP.
 
 import abc
 import logging
-from typing import Optional, List, Tuple, Type, Dict, Any
+from typing import Optional, List, Tuple, Type, Dict, Any, TYPE_CHECKING
 
 import numpy as np
 
-from qosst_core.configuration import Configuration
 from qosst_core.synchronization import BaseSynchronizationSequence
 from qosst_core.dsp.phase_estimator import BasePhaseEstimator
 from qosst_core.dsp.timing_estimator import BaseTimingRecoveryEstimator
@@ -32,6 +31,9 @@ from qosst_core.schema.detection import (
     DetectionSchema,
     SINGLE_POLARISATION_RF_HETERODYNE,
 )
+
+if TYPE_CHECKING:
+    from qosst_core.configuration import Configuration
 
 logger = logging.getLogger(__name__)
 
@@ -218,7 +220,7 @@ class BaseDSP(abc.ABC):
 
         self.parameters_set = True
 
-    def configure_from_config(self, config: Configuration):
+    def configure_from_config(self, config: "Configuration"):
         """Configure the DSP from a :class:`~qosst_core.configuration.config.Configuration` object..
 
         Args:
@@ -313,7 +315,7 @@ class BaseDSP(abc.ABC):
         self,
         electronic_noise_data: List[np.ndarray],
         electronic_shot_noise_data: List[np.ndarray],
-    ) -> Tuple[np.ndarray, np.ndarray]:
+    ) -> Optional[Tuple[np.ndarray, np.ndarray]]:
         """Actually run the special DSP.
 
         Args:
@@ -321,7 +323,7 @@ class BaseDSP(abc.ABC):
             electronic_shot_noise_data (List[np.ndarray]): electronic and shot noise data.
 
         Returns:
-            Tuple[np.ndarray, np.ndarray]: electronic noise symbols and electronic and shot noise symbols.
+            Optional[Tuple[np.ndarray, np.ndarray]]: electronic noise symbols and electronic and shot noise symbols.
         """
 
     def special_dsp(
