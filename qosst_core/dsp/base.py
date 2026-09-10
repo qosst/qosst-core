@@ -262,16 +262,16 @@ class BaseDSP(abc.ABC):
     @abc.abstractmethod
     def _run_dsp(
         self,
-        data: np.ndarray,
+        data: List[np.ndarray],
         electronic_noise_data: Optional[List[np.ndarray]] = None,
         electronic_shot_noise_data: Optional[List[np.ndarray]] = None,
     ) -> Optional[List[np.ndarray]]:
         """Actually run the digital signal processing stack.
 
         Args:
-            data (np.ndarray): data to apply the DSP on.
-            electronic_noise_data (List[np.ndarray], optional): electronic noise data. Maybe be used by some DSPs. Defaults to None.
-            electronic_shot_noise_data (List[np.ndarray], optional): electronic and shot noise data. Maybe be used by some DSPs. Defaults to None.
+            data (List[np.ndarray]): data to apply the DSP on. Each element of the list corresponds to a channel.
+            electronic_noise_data (List[np.ndarray], optional): electronic noise data. Each element of the list corresponds to a channel. Maybe be used by some DSPs. Defaults to None.
+            electronic_shot_noise_data (List[np.ndarray], optional): electronic and shot noise data. Each element of the list corresponds to a channel. Maybe be used by some DSPs. Defaults to None.
 
         Returns:
             Optional[List[np.ndarray]]: recovered symbols.
@@ -279,16 +279,16 @@ class BaseDSP(abc.ABC):
 
     def dsp(
         self,
-        data: np.ndarray,
+        data: List[np.ndarray],
         electronic_noise_data: Optional[List[np.ndarray]] = None,
         electronic_shot_noise_data: Optional[List[np.ndarray]] = None,
     ) -> Optional[List[np.ndarray]]:
         """Apply the digital signal processing stack.
 
         Args:
-            data (np.ndarray): data to apply the DSP on.
-            electronic_noise_data (List[np.ndarray], optional): electronic noise data. Maybe be used by some DSPs. Defaults to None.
-            electronic_shot_noise_data (List[np.ndarray], optional): electronic and shot noise data. Maybe be used by some DSPs. Defaults to None.
+            data (np.ndarray): data to apply the DSP on. Each element of the list corresponds to a channel.
+            electronic_noise_data (List[np.ndarray], optional): electronic noise data. Each element of the list corresponds to a channel. Maybe be used by some DSPs. Defaults to None.
+            electronic_shot_noise_data (List[np.ndarray], optional): electronic and shot noise data. Each element of the list corresponds to a channel. Maybe be used by some DSPs. Defaults to None.
 
         Returns:
             Optional[List[np.ndarray]]: recovered symbols or None.
