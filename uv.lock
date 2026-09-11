@@ -1359,7 +1359,7 @@ wheels = [
 
 [[package]]
 name = "qosst-core"
-version = "0.10.4.dev12"
+version = "0.10.4.dev13"
 source = { editable = "." }
 dependencies = [
     { name = "falcon-digital-signature" },
