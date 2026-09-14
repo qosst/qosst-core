@@ -20,6 +20,7 @@ Generic phase estimator.
 """
 
 import abc
+from typing import Optional
 
 import numpy as np
 
@@ -30,13 +31,42 @@ class BasePhaseEstimator(abc.ABC):
     Abstract class for the phase estimator.
     """
 
-    def __init__(self, **_kwargs) -> None:
-        pass
+    pilot_phase_filtering_size: int  #: Value for the uniform filter size of the phase.
+    pilot_frequency_filtering_size: (
+        int  #: Value for the uniform filter size of the frequency.
+    )
+    adc_rate: float  #: ADC rate in Sample/s.
+    linewidth: float  #: Linewidth in Hz.
+
+    def __init__(
+        self,
+        pilot_phase_filtering_size: int,
+        pilot_frequency_filtering_size: int,
+        adc_rate: float,
+        linewidth: float,
+    ) -> None:
+        """
+        Args:
+            pilot_phase_filtering_size (int): Value for the uniform filter size of the phase.
+            pilot_frequency_filtering_size (int): Value for the uniform filter size of the frequency.
+            adc_rate (float): ADC rate in Sample/s.
+            linewidth (float): Linewidth in Hz.
+        """
+        self.pilot_frequency_filtering_size = pilot_frequency_filtering_size
+        self.pilot_phase_filtering_size = pilot_phase_filtering_size
+        self.adc_rate = adc_rate
+        self.linewidth = linewidth
 
     @abc.abstractmethod
-    def estimate_phase(self) -> np.ndarray:
+    def estimate_phase(
+        self, pilot_data: np.ndarray, shot_noise_data: Optional[np.ndarray] = None
+    ) -> np.ndarray:
         """
         Estimate the phase.
+
+        Args:
+            pilot_data (np.ndarray): Data of the pilots.
+            shot_noise_data (np.ndarray, optional): Data of the shot noise, may be used by some phase estimators. Defaults to None.
 
         Returns:
             np.ndarray: the estimated phase.
@@ -50,5 +80,7 @@ class NoneBaseEstimator(BasePhaseEstimator):
     Raise a non implemented error.
     """
 
-    def estimate_phase(self):
+    def estimate_phase(
+        self, pilot_data: np.ndarray, shot_noise_data: Optional[np.ndarray] = None
+    ):
         raise NotImplementedError("NoneBaseEstimator should not be used in the DSP.")
