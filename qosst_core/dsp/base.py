@@ -113,6 +113,9 @@ class BaseDSP(abc.ABC):
         float  #: Ratio for downsampling electronic noise samples for special DSP.
     )
     elec_shot_noise_estimation_ratio: float  #: Ratio for downsampling electronic and shot noise samples for special DSP.
+    synchronization_use_abs: (
+        bool  #: Use only abs for recovering the synchronization sequence.
+    )
 
     # pylint: disable=too-many-arguments,too-many-positional-arguments,too-many-locals
     def set_parameters(
@@ -149,6 +152,7 @@ class BaseDSP(abc.ABC):
         debug: bool = False,
         elec_noise_estimation_ratio: float = 1.0,
         elec_shot_noise_estimation_ratio: float = 1.0,
+        synchronization_use_abs: bool = False,
     ):
         """
         Set the parameters of the DSP.
@@ -184,6 +188,7 @@ class BaseDSP(abc.ABC):
             debug (bool, optional): if True, the DSPDebug object is returned. Defaults to False.
             elec_noise_estimation_ratio (float, optional): Ratio for downsampling electronic noise samples for special DSP. Defaults to 1.
             elec_shot_noise_estimation_ratio (float, optional): Ratio for downsampling electronic and shot noise samples for special DSP. Defaults to 1.
+            synchronization_use_abs (bool, optional): Use only abs for recovering the synchronization sequence. Defaults to 1.
         """
         self.symbol_rate = symbol_rate
         self.dac_rate = dac_rate
@@ -217,6 +222,7 @@ class BaseDSP(abc.ABC):
         self.debug = debug
         self.elec_noise_estimation_ratio = elec_noise_estimation_ratio
         self.elec_shot_noise_estimation_ratio = elec_shot_noise_estimation_ratio
+        self.synchronization_use_abs = synchronization_use_abs
 
         self.parameters_set = True
 
@@ -259,6 +265,7 @@ class BaseDSP(abc.ABC):
             config.bob.dsp.debug,
             config.bob.dsp.elec_noise_estimation_ratio,
             config.bob.dsp.elec_shot_noise_estimation_ratio,
+            config.bob.dsp.synchronization_use_abs,
         )
 
     @abc.abstractmethod
