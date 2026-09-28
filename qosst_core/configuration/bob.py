@@ -461,6 +461,9 @@ class BobDSPConfiguration(BaseConfiguration):
     timing_recovery_estimator: Type[
         BaseTimingRecoveryEstimator
     ]  #: Timing recovery estimator to use.
+    synchronization_use_abs: (
+        bool  #: Only se absolute value for synchronization recovery.
+    )
 
     DEFAULT_DSP_CLASS_STR: str = "qosst_core.dsp.base.NoneDSP"  #: Default DSP class.
     DEFAULT_DEBUG: bool = True  #: Default value fot the debug mode.
@@ -494,6 +497,9 @@ class BobDSPConfiguration(BaseConfiguration):
     )
     DEFAULT_TIMING_RECOVERY_ESTIMATOR_STR: str = (
         "qosst_core.dsp.timing_recovery.NoneTimingRecoveryEstimator"  #: Default timing recovery estimator.
+    )
+    DEFAULT_SYNCHRONIZATION_USE_ABS: bool = (
+        False  #: Default value for synchronization use abs.
     )
 
     def from_dict(self, config: dict) -> None:
@@ -561,6 +567,9 @@ class BobDSPConfiguration(BaseConfiguration):
             "elec_shot_noise_estimation_ratio",
             self.DEFAULT_ELEC_SHOT_NOISE_ESTIMATION_RATIO,
         )
+        self.synchronization_use_abs = config.get(
+            "synchronization_use_abs", self.DEFAULT_SYNCHRONIZATION_USE_ABS
+        )
 
         phase_estimator_str = config.get(
             "phase_estimator", self.DEFAULT_PHASE_ESTIMATOR_STR
@@ -619,6 +628,7 @@ class BobDSPConfiguration(BaseConfiguration):
         res += f"Phase estimator : {self.phase_estimator}\n"
         res += f"Linewidth : {self.linewidth} Hz\n"
         res += f"Timing recovery estimator : {self.timing_recovery_estimator}\n"
+        res += f"Synchronization use abs : {self.synchronization_use_abs}\n"
         res += "\n"
         res += str(self.equalizer)
         return res

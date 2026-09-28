@@ -604,7 +604,11 @@ phase_estimator = "qosst_core.dsp.phase_estimator.NonePhaseEstimator"
 # This should be a valid class, inheriting from 
 # qosst_core.dsp.timing_estimator.BaseTimingRecoveryEstimator.
 # Default : "qosst_core.dsp.timing_estimator.NonePhaseEstimator"
-phase_estimator = "qosst_core.dsp.timing_estimator.NoneTimingRecoveryEstimator"
+timing_recovery_estimator = "qosst_core.dsp.timing_estimator.NoneTimingRecoveryEstimator"
+
+# Use only absolute value for synchronization sequence recovery.
+# Default : false
+synchronization_use_abs = false
 
 [bob.dsp.equalizer]
 
@@ -729,16 +733,22 @@ modulation_type = "qosst_core.modulation.GaussianModulation"
 # Default : 0
 modulation_size = 0
 
-[frame.zadoff_chu]
+[frame.synchronization]
+
+# Type of sequence to use, inheriting from
+# qosst_core.synchronization.synchronization.BaseSynchronizationSequence
+# Default : "qosst_core.synchronization.zc.ZadoffChuSequence"
+synchronization_type = "qosst_core.synchronization.zc.ZadoffChuSequence"
+
 # The root of the Zadoff-Chu sequence.
 # This should be comprime with the length.
 # Default : 5
-root = 5
+zc_root = 5
 
 # The length of the Zadoff-Chu sequence.
 # This should be coprime with the root.
 # Default : 3989
-length = 3989
+zc_length = 3989
 
 # The rate of the Zadoff-Chu sequence in Samples/s.
 # A rate of 0 will be understood as to use the same rate as the DAC.
