@@ -20,7 +20,7 @@ Generic phase estimator.
 """
 
 import abc
-from typing import Optional
+from typing import List, Optional
 
 import numpy as np
 
@@ -60,17 +60,15 @@ class BasePhaseEstimator(abc.ABC):
     @abc.abstractmethod
     def estimate_phase(
         self,
-        pilot_data: np.ndarray,
+        pilot_data: List[np.ndarray],
         shot_noise_data: Optional[np.ndarray] = None,
-        pilot_data_2: Optional[np.ndarray] = None,
     ) -> np.ndarray:
         """
         Estimate the phase.
 
         Args:
-            pilot_data (np.ndarray): Data of the pilots.
+            pilot_data (List[np.ndarray]): Data of the pilots. Each element of the list corresponds to a pilot.
             shot_noise_data (np.ndarray, optional): Data of the shot noise, may be used by some phase estimators. Defaults to None.
-            pilot_data_2 (np.ndarray, optional): Data of the second pilot, may be used by some phase estimators. Defaults to None.
 
         Returns:
             np.ndarray: the estimated phase.
@@ -86,8 +84,7 @@ class NoneBaseEstimator(BasePhaseEstimator):
 
     def estimate_phase(
         self,
-        pilot_data: np.ndarray,
+        pilot_data: List[np.ndarray],
         shot_noise_data: Optional[np.ndarray] = None,
-        pilot_data_2: Optional[np.ndarray] = None,
     ):
         raise NotImplementedError("NoneBaseEstimator should not be used in the DSP.")
