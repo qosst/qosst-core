@@ -461,6 +461,7 @@ class BobDSPConfiguration(BaseConfiguration):
     linewidth: float  #: Linewidth of the laser, in Hz. This is used for the phase recovery.
     timing_recovery_estimator: Type[TimingRecoveryEstimator]  #: Timing recovery estimator to use.
     pulsed_sampling: bool  #: Whether to use pulsed sampling in timing recovery. If true, the signal is sampled at a higher rate and then resampled at the optimal sampling time. If false, the signal is directly sampled at the optimal sampling time.
+    timing_offset: float  #: Clock drift between Alice and Bob over the frame, in samples, corrected by the static timing recovery.
 
     DEFAULT_DEBUG: bool = True  #: Default value fot the debug mode.
     DEFAULT_DIRECT_PILOT_TRACKING: bool = False
@@ -491,6 +492,7 @@ class BobDSPConfiguration(BaseConfiguration):
         "qosst_bob.dsp.timing_recovery.BestSamplingPointTimingRecovery"  #: Default timing recovery estimator.
     )
     DEFAULT_PULSED_SAMPLING: bool = False  #: Default value for the use of pulsed sampling in timing recovery.
+    DEFAULT_TIMING_OFFSET: float = 10  #: Default value for the clock drift corrected by the static timing recovery, in samples.
 
     def from_dict(self, config: dict) -> None:
         """Read configuration from dict.
@@ -568,6 +570,7 @@ class BobDSPConfiguration(BaseConfiguration):
                 f"Cannot load the timing recovery estimator class {timing_recovery_estimator_str}."
             ) from exc
         self.pulsed_sampling = config.get("pulsed_sampling", self.DEFAULT_PULSED_SAMPLING)
+        self.timing_offset = config.get("timing_offset", self.DEFAULT_TIMING_OFFSET)
 
     def __str__(self) -> str:
         res = "Bob DSP Configuration\n"
@@ -593,6 +596,7 @@ class BobDSPConfiguration(BaseConfiguration):
         res += f"Linewidth : {self.linewidth} Hz\n"
         res += f"Timing recovery estimator : {self.timing_recovery_estimator}\n"
         res += f"Pulsed sampling : {self.pulsed_sampling}\n"
+        res += f"Timing offset : {self.timing_offset} samples\n"
         res += "\n"
         res += str(self.equalizer)
         return res

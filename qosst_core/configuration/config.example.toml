@@ -607,6 +607,11 @@ timing_recovery_estimator = "qosst_bob.dsp.timing_recovery.BestSamplingPointTimi
 # Default : false
 pulsed_sampling = false
 
+# Clock drift between Alice and Bob over the frame, in samples,
+# corrected by the static timing recovery.
+# Default : 10
+timing_offset = 10
+
 [bob.dsp.equalizer]
 
 # If true, use the CMA equalizer.
