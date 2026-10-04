@@ -22,7 +22,7 @@ Each class corresponds to a section in the .toml configuration file.
 The mean configuration class is parent to the other configuration classes.
 """
 
-from typing import Optional
+from typing import Optional, List
 import logging
 
 import toml
@@ -95,6 +95,10 @@ class Configuration:
     DEFAULT_LABEL: str = "Example config"  #: Default label
     DEFAULT_SERIAL_NUMBER: str = ""
 
+    COMPATIBLE_VERSIONS: List[int] = [
+        "2.0",
+    ]
+
     def __init__(self, config_path: QOSSTPath) -> None:
         """
         Args:
@@ -107,6 +111,20 @@ class Configuration:
             config = toml.load(str(config_path), decoder=PickleableTomlDecoder())
         except toml.TomlDecodeError as exc:
             raise InvalidConfiguration("The TOML file is not readable.") from exc
+
+        # Get configuration version
+        version = config.get("configuration_version")
+
+        if version is None:
+            logger.warning(
+                "Configuration version not present. Version is assumed to be 1.0."
+            )
+            version = "1.0"
+
+        if version not in self.COMPATIBLE_VERSIONS:
+            raise InvalidConfiguration(
+                "The version of the configuration is invalid with respect to the current configuration object."
+            )
 
         self.from_dict(config)
 

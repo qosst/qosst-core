@@ -17,6 +17,7 @@
 """
 Utils module for qosst-core.
 """
+
 from typing import Tuple, List, Union, Any, Optional
 from os import PathLike
 import functools

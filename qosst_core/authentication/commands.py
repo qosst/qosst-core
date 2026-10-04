@@ -17,6 +17,7 @@
 """
 QOSST commands for the authentication submodule.
 """
+
 import argparse
 
 from qosst_core.authentication.falcon import FalconAuthenticator

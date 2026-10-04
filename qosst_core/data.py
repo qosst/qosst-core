@@ -17,6 +17,7 @@
 """
 Module to handle object that should be saved and loaded in QOSST.
 """
+
 from typing import Optional
 import pickle
 import logging

@@ -17,14 +17,14 @@
 """
 Generic synchronization sequence.
 """
+
 import abc
-from typing import Optional
 
 import numpy as np
 
 
 # pylint: disable=too-few-public-methods
-class SynchronizationSequence(abc.ABC):
+class BaseSynchronizationSequence(abc.ABC):
     """
     Abstract class for the synchronization sequence.
     """
@@ -46,7 +46,7 @@ class SynchronizationSequence(abc.ABC):
     def length(self) -> int:
         """
         Return the length of the synchronization sequence.
-        
+
         Returns:
             int: length of the synchronization sequence.
         """

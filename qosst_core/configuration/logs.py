@@ -17,6 +17,7 @@
 """
 Configuration for logs section.
 """
+
 import logging
 
 from qosst_core.configuration.exceptions import InvalidConfiguration

@@ -17,6 +17,7 @@
 """
 PCSQAM modulation.
 """
+
 from math import comb
 from itertools import product
 import numpy as np

@@ -17,6 +17,7 @@
 """
 Module holding some utils function for notifications.
 """
+
 import abc
 import requests
 

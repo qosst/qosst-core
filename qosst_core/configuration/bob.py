@@ -18,6 +18,7 @@
 """
 Configuration for Bob section.
 """
+
 from typing import Type, Any, List, Tuple, Dict
 import logging
 
@@ -38,8 +39,9 @@ from qosst_core.utils import get_object_by_import_path
 from qosst_core.skr_computations import BaseCVQKDSKRCalculator
 from qosst_core.parameters_estimation import BaseEstimator
 from qosst_core.schema.detection import DetectionSchema
-from qosst_core.dsp.phase_estimator import PhaseEstimator
-from qosst_core.dsp.timing_estimator import TimingRecoveryEstimator
+from qosst_core.dsp.phase_estimator import BasePhaseEstimator
+from qosst_core.dsp.timing_estimator import BaseTimingRecoveryEstimator
+from qosst_core.dsp.base import BaseDSP
 
 logger = logging.getLogger(__name__)
 
@@ -425,15 +427,12 @@ class BobDSPConfiguration(BaseConfiguration):
     Class holding DSP configuration for Bob. It should correspond to the bob.dsp section.
     """
 
+    dsp_class: Type[BaseDSP]  #: DSP class to use.
     debug: bool  #: Debug mode.
     fir_size: int
     tone_filtering_cutoff: (
         float  #: Cutoff for the FIR filter for the filtering of the pilot tone.
     )
-    direct_pilot_tracking: (
-        bool  #: Whether the first pilot can directly be used to estimate beat frequency and phase noise. Defaults to False.
-    )
-    process_subframes: bool
     subframes_size: int  # Size of DSP processing block
     subframes_subdivisions: int  # Subdivision of a subframe, for phase recovery
     abort_clock_recovery: float  #: Maximal value of clock mismatch allowed to be found by clock recovery algorithm.
@@ -449,27 +448,35 @@ class BobDSPConfiguration(BaseConfiguration):
     num_samples_pilot_search: (
         int  #: Number of samples to estimate the frequency of the pilots.
     )
-    symbol_timing_oversampling: (
-        int  #: By which factor the signal is oversampled when searching for the optimal symbol sampling time.
-    )
+    symbol_timing_oversampling: int  #: By which factor the signal is oversampled when searching for the optimal symbol sampling time.
     equalizer: (
         BobDSPEqualizerConfiguration  #: The equalizer part of Bob's DSP configuration
     )
     elec_noise_estimation_ratio: float  #: Ratio of the total number of electronic noise samples to use for the variance estimation
     elec_shot_noise_estimation_ratio: float  #: Ratio of the total number of electronic and shot noise samples to use for the variance estimation
-    phase_estimator: Type[PhaseEstimator]  #: Phase estimator to use.
-    linewidth: float  #: Linewidth of the laser, in Hz. This is used for the phase recovery.
-    timing_recovery_estimator: Type[TimingRecoveryEstimator]  #: Timing recovery estimator to use.
-    pulsed_sampling: bool  #: Whether to use pulsed sampling in timing recovery. If true, the signal is sampled at a higher rate and then resampled at the optimal sampling time. If false, the signal is directly sampled at the optimal sampling time.
-    timing_offset: float  #: Clock drift between Alice and Bob over the frame, in samples, corrected by the static timing recovery.
+    phase_estimator: Type[BasePhaseEstimator]  #: Phase estimator to use.
+    linewidth: (
+        float  #: Linewidth of the laser, in Hz. This is used for the phase recovery.
+    )
+    timing_recovery_estimator: Type[
+        BaseTimingRecoveryEstimator
+    ]  #: Timing recovery estimator to use.
+    synchronization_use_abs: (
+        bool  #: Only se absolute value for synchronization recovery.
+    )
+    pulsed_sampling: (
+        bool  #: Whether to use pulsed sampling in timing recovery. If true, the signal is sampled at a higher rate and then resampled at the optimal sampling time. If false, the signal is directly sampled at the optimal sampling time.
+    )
+    timing_offset: (
+        float  #: Clock drift between Alice and Bob over the frame, in samples, corrected by the static timing recovery.
+    )
 
+    DEFAULT_DSP_CLASS_STR: str = "qosst_core.dsp.base.NoneDSP"  #: Default DSP class.
     DEFAULT_DEBUG: bool = True  #: Default value fot the debug mode.
-    DEFAULT_DIRECT_PILOT_TRACKING: bool = False
     DEFAULT_FIR_SIZE: int = 500
     DEFAULT_TONE_FILTERING_CUTOFF: float = (
         10e6  #: Default value for the cutoff of the FIR filter for the filtering of the tone.
     )
-    DEFAULT_PROCESS_SUBFRAMES: bool = True
     DEFAULT_SUBFRAMES_SIZE: int = 50_000
     DEFAULT_SUBFRAMES_SUBDIVISIONS: int = 1
     DEFAULT_ABORT_CLOCK_RECOVERY: float = 0  #: Default value for abort_clock_recovery.
@@ -477,22 +484,35 @@ class BobDSPConfiguration(BaseConfiguration):
     DEFAULT_EXCLUSION_ZONE_PILOTS: List[List[float]] = [
         [0.0, 100e3]
     ]  #: Default value for the exclusion zone for the search of the pilots.
-    DEFAULT_PILOT_PHASE_FILTERING_SIZE: int = 0 #: Default value for the filtering size of the phase for the phase recovery.
-    DEFAULT_PILOT_FREQUENCY_FILTERING_SIZE: int = 0 #: Default value for the filtering size of the phase for the phase recovery.
+    DEFAULT_PILOT_PHASE_FILTERING_SIZE: int = (
+        0  #: Default value for the filtering size of the phase for the phase recovery.
+    )
+    DEFAULT_PILOT_FREQUENCY_FILTERING_SIZE: int = (
+        0  #: Default value for the filtering size of the phase for the phase recovery.
+    )
     DEFAULT_NUM_SAMPLES_FBEAT_ESTIMATION: int = 100000
     DEFAULT_NUM_SAMPLES_PILOT_SEARCH: int = 10_000_000
     DEFAULT_SYMBOL_TIMING_OVERSAMPLING: int = 1
     DEFAULT_ELEC_NOISE_ESTIMATION_RATIO: float = 1.0
     DEFAULT_ELEC_SHOT_NOISE_ESTIMATION_RATIO: float = 1.0
     DEFAULT_PHASE_ESTIMATOR_STR: str = (
-        "qosst_bob.dsp.phase_estimation.ClassicalPhaseEstimator"  #: Default phase estimator.
+        "qosst_core.dsp.phase_estimation.NonePhaseEstimator"  #: Default phase estimator.
     )
-    DEFAULT_LINEWIDTH: float = 100  #: Default value for the linewidth of the laser, in Hz.
+    DEFAULT_LINEWIDTH: float = (
+        100  #: Default value for the linewidth of the laser, in Hz.
+    )
     DEFAULT_TIMING_RECOVERY_ESTIMATOR_STR: str = (
-        "qosst_bob.dsp.timing_recovery.BestSamplingPointTimingRecovery"  #: Default timing recovery estimator.
+        "qosst_core.dsp.timing_recovery.NoneTimingRecoveryEstimator"  #: Default timing recovery estimator.
     )
-    DEFAULT_PULSED_SAMPLING: bool = False  #: Default value for the use of pulsed sampling in timing recovery.
-    DEFAULT_TIMING_OFFSET: float = 10  #: Default value for the clock drift corrected by the static timing recovery, in samples.
+    DEFAULT_SYNCHRONIZATION_USE_ABS: bool = (
+        False  #: Default value for synchronization use abs.
+    )
+    DEFAULT_PULSED_SAMPLING: bool = (
+        False  #: Default value for the use of pulsed sampling in timing recovery.
+    )
+    DEFAULT_TIMING_OFFSET: float = (
+        10  #: Default value for the clock drift corrected by the static timing recovery, in samples.
+    )
 
     def from_dict(self, config: dict) -> None:
         """Read configuration from dict.
@@ -505,29 +525,32 @@ class BobDSPConfiguration(BaseConfiguration):
                 "bob.dsp.equalizer is missing from the configuration file. Using default values for all the parameters."
             )
 
+        dsp_class_str = config.get("dsp_class", self.DEFAULT_DSP_CLASS_STR)
+        try:
+            self.dsp_class = get_object_by_import_path(dsp_class_str)
+        except ImportError as exc:
+            raise InvalidConfiguration(
+                f"Cannot load the DSP class {dsp_class_str}."
+            ) from exc
+
+        if not issubclass(self.dsp_class, BaseDSP):
+            raise InvalidConfiguration(
+                f"{dsp_class_str} is not a subclass of qosst_core.dsp.base.BaseDSP."
+            )
+
         self.debug = config.get("debug", self.DEFAULT_DEBUG)
-        self.direct_pilot_tracking = config.get(
-            "direct_pilot_tracking", self.DEFAULT_DIRECT_PILOT_TRACKING
-        )
         self.fir_size = config.get("fir_size", self.DEFAULT_FIR_SIZE)
         self.tone_filtering_cutoff = config.get(
             "tone_filtering_cutoff", self.DEFAULT_TONE_FILTERING_CUTOFF
         )
-        self.process_subframes = config.get(
-            "process_subframes", self.DEFAULT_PROCESS_SUBFRAMES
-        )
-        self.subframes_size = config.get(
-            "subframes_size", self.DEFAULT_SUBFRAMES_SIZE
-        )
+        self.subframes_size = config.get("subframes_size", self.DEFAULT_SUBFRAMES_SIZE)
         self.subframes_subdivisions = config.get(
             "subframes_subdivisions", self.DEFAULT_SUBFRAMES_SUBDIVISIONS
         )
         self.abort_clock_recovery = config.get(
             "abort_clock_recovery", self.DEFAULT_ABORT_CLOCK_RECOVERY
         )
-        self.alice_dac_rate = config.get(
-            "alice_dac_rate", self.DEFAULT_ALICE_DAC_RATE
-        )
+        self.alice_dac_rate = config.get("alice_dac_rate", self.DEFAULT_ALICE_DAC_RATE)
         exclusion = config.get(
             "exclusion_zone_pilots", self.DEFAULT_EXCLUSION_ZONE_PILOTS
         )
@@ -536,7 +559,8 @@ class BobDSPConfiguration(BaseConfiguration):
             "pilot_phase_filtering_size", self.DEFAULT_PILOT_PHASE_FILTERING_SIZE
         )
         self.pilot_frequency_filtering_size = config.get(
-            "pilot_frequency_filtering_size", self.DEFAULT_PILOT_FREQUENCY_FILTERING_SIZE
+            "pilot_frequency_filtering_size",
+            self.DEFAULT_PILOT_FREQUENCY_FILTERING_SIZE,
         )
         self.num_samples_fbeat_estimation = config.get(
             "num_samples_fbeat_estimation", self.DEFAULT_NUM_SAMPLES_FBEAT_ESTIMATION
@@ -552,41 +576,67 @@ class BobDSPConfiguration(BaseConfiguration):
             "elec_noise_estimation_ratio", self.DEFAULT_ELEC_NOISE_ESTIMATION_RATIO
         )
         self.elec_shot_noise_estimation_ratio = config.get(
-            "elec_shot_noise_estimation_ratio", self.DEFAULT_ELEC_SHOT_NOISE_ESTIMATION_RATIO
+            "elec_shot_noise_estimation_ratio",
+            self.DEFAULT_ELEC_SHOT_NOISE_ESTIMATION_RATIO,
         )
-        phase_estimator_str = config.get("phase_estimator", self.DEFAULT_PHASE_ESTIMATOR_STR)
+        self.synchronization_use_abs = config.get(
+            "synchronization_use_abs", self.DEFAULT_SYNCHRONIZATION_USE_ABS
+        )
+
+        phase_estimator_str = config.get(
+            "phase_estimator", self.DEFAULT_PHASE_ESTIMATOR_STR
+        )
         try:
             self.phase_estimator = get_object_by_import_path(phase_estimator_str)
         except ImportError as exc:
             raise InvalidConfiguration(
                 f"Cannot load the phase estimator class {phase_estimator_str}."
             ) from exc
+
+        if not issubclass(self.phase_estimator, BasePhaseEstimator):
+            raise InvalidConfiguration(
+                f"{phase_estimator_str} is not a subclass of qosst_core.dsp.phase_estimator.BasePhaseEstimator."
+            )
+
         self.linewidth = config.get("linewidth", self.DEFAULT_LINEWIDTH)
-        timing_recovery_estimator_str = config.get("timing_recovery_estimator", self.DEFAULT_TIMING_RECOVERY_ESTIMATOR_STR)
+        timing_recovery_estimator_str = config.get(
+            "timing_recovery_estimator", self.DEFAULT_TIMING_RECOVERY_ESTIMATOR_STR
+        )
         try:
-            self.timing_recovery_estimator = get_object_by_import_path(timing_recovery_estimator_str)
+            self.timing_recovery_estimator = get_object_by_import_path(
+                timing_recovery_estimator_str
+            )
         except ImportError as exc:
             raise InvalidConfiguration(
                 f"Cannot load the timing recovery estimator class {timing_recovery_estimator_str}."
             ) from exc
-        self.pulsed_sampling = config.get("pulsed_sampling", self.DEFAULT_PULSED_SAMPLING)
+
+        if not issubclass(self.timing_recovery_estimator, BaseTimingRecoveryEstimator):
+            raise InvalidConfiguration(
+                f"{timing_recovery_estimator_str} is not a subclass of qosst_core.dsp.timing_estimator.BaseTimingRecoveryEstimator."
+            )
+
+        self.pulsed_sampling = config.get(
+            "pulsed_sampling", self.DEFAULT_PULSED_SAMPLING
+        )
         self.timing_offset = config.get("timing_offset", self.DEFAULT_TIMING_OFFSET)
 
     def __str__(self) -> str:
         res = "Bob DSP Configuration\n"
         res += "---------------------\n"
-        res += f"Direct pilot tracking : {self.direct_pilot_tracking}\n"
+        res += f"DSP class : {self.dsp_class}\n"
         res += f"Debug : {self.debug}\n"
         res += f"FIR size : {self.fir_size}\n"
         res += f"Tone filtering cut-off: {self.tone_filtering_cutoff}\n"
-        res += f"Process subframes : {self.process_subframes}\n"
         res += f"Subframes size : {self.subframes_size}\n"
         res += f"Subframes subdivisions : {self.subframes_subdivisions}\n"
         res += f"Abort clock recovery : {self.abort_clock_recovery}\n"
         res += f"Alice DAC rate : {self.alice_dac_rate}\n"
         res += f"Exclusion zone : {self.exclusion_zone_pilots}\n"
         res += f"Pilot phase filtering size : {self.pilot_phase_filtering_size}\n"
-        res += f"Pilot frequency filtering size : {self.pilot_frequency_filtering_size}\n"
+        res += (
+            f"Pilot frequency filtering size : {self.pilot_frequency_filtering_size}\n"
+        )
         res += f"Number of samples for fbeat estimation : {self.num_samples_fbeat_estimation}\n"
         res += f"Number of samples for pilot search : {self.num_samples_pilot_search}\n"
         res += f"Symbol timing oversampling : {self.symbol_timing_oversampling}\n"
@@ -595,6 +645,7 @@ class BobDSPConfiguration(BaseConfiguration):
         res += f"Phase estimator : {self.phase_estimator}\n"
         res += f"Linewidth : {self.linewidth} Hz\n"
         res += f"Timing recovery estimator : {self.timing_recovery_estimator}\n"
+        res += f"Synchronization use abs : {self.synchronization_use_abs}\n"
         res += f"Pulsed sampling : {self.pulsed_sampling}\n"
         res += f"Timing offset : {self.timing_offset} samples\n"
         res += "\n"

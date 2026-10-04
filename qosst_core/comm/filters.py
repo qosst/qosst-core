@@ -17,6 +17,7 @@
 """
 Digital Filters for CV-QKD.
 """
+
 import abc
 from typing import Tuple
 

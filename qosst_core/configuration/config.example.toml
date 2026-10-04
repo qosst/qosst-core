@@ -3,6 +3,9 @@
 # to the configuration parser.
 # Please refer to the documentation for more details.
 
+# The version of the configuration file.
+configuration_version = "2.0"
+
 # The label of your config
 # in case you have different configuration
 # Default : Example config
@@ -492,7 +495,7 @@ location = ""
 
 [bob.polarisation_recovery.powermeter]
 
-# The class of powermter to use.
+# The class of powermeter to use.
 # This should be a valid class, inheriting from qosst_hal.powermeter.GenericPowerMeter.
 # Default : "qosst_hal.powermeter.FakePowerMeter"
 device = "qosst_hal.powermeter.FakePowerMeter"
@@ -507,11 +510,10 @@ timeout = 10
 
 [bob.dsp]
 
-# Direct pilot tracking.
-# If True, the first pilot can directly be used to estimate beat frequency
-# and phase noise
-# Default : false
-direct_pilot_tracking = false
+# DSP class to use.
+# This should be a valid class, inheriting from qosst_core.dsp.base.BaseDSP.
+# Default : "qosst_core.dsp.base.NoneDSP"
+dsp_class = "qosst_core.dsp.base.NoneDSP"
 
 # Debug mode.
 # If True, a DSPDebug object is returned with additional information.
@@ -528,15 +530,12 @@ fir_size = 500
 # Default : 10e6
 tone_filtering_cutoff = 10e6
 
-# Set true to process the data in subframes
-# Default : true
-process_subframes = true
+# Size of the subframes. Set value to 0 or num_symbols to disable the feature.
+# Default : 0
+subframes_size = 0
 
-# Size of the subframes if process_subframes is true
-# Default : 50000
-subframes_size = 50000
-
-# Number of a subdivisions of a subframe
+# Number of a subdivisions of a subframe.
+# Default: 4
 subframes_subdivisions = 4
 
 # Abort clock recovery
@@ -549,8 +548,8 @@ subframes_subdivisions = 4
 abort_clock_recovery = 0
 
 # Alice DAC rate (Samples/second)
-# Default : 500e6
-alice_dac_rate = 500e6
+# Default : 2e9
+alice_dac_rate = 2e9
 
 # Exclusion zone for pilot search
 # This is represented as a list of lists. The insides tuple should be a of length 2,
@@ -576,11 +575,11 @@ pilot_frequency_filtering_size = 0
 # Number of samples to estimate properly
 # f_beat in general dsp
 # Default : 100000
-num_samples_fbeat_estimation = 100000
+num_samples_fbeat_estimation = 100_000
 
 # Number of samples to estimate the frequency of the pilots
 # Default : 10 000 000
-num_samples_pilot_search = 10000000
+num_samples_pilot_search = 10_000_000
 
 # By which factor the signal is oversampled when searching for the
 # optimal symbol sampling time.
@@ -596,12 +595,20 @@ elec_noise_estimation_ratio = 0.1
 elec_shot_noise_estimation_ratio = 1.0
 
 # Phase estimator to use for the phase recovery.
-# Default : "qosst_bob.dsp.phase_estimation.ClasicalPhaseEstimator"
-phase_estimator = "qosst_bob.dsp.phase_estimation.ClasicalPhaseEstimator"
+# This should be a valid class, inheriting from 
+# qosst_core.dsp.phase_estimator.BasePhaseEstimator.
+# Default : "qosst_core.dsp.phase_estimator.NonePhaseEstimator"
+phase_estimator = "qosst_core.dsp.phase_estimator.NonePhaseEstimator"
 
-# Timing recovery estimator to use for the timing recovery.
-# Default : "qosst_bob.dsp.timing_recovery.BestSamplingPointTimingRecovery"
-timing_recovery_estimator = "qosst_bob.dsp.timing_recovery.BestSamplingPointTimingRecovery"
+# Timing recovery estimator to use for timing recovery recovery.
+# This should be a valid class, inheriting from 
+# qosst_core.dsp.timing_estimator.BaseTimingRecoveryEstimator.
+# Default : "qosst_core.dsp.timing_estimator.NonePhaseEstimator"
+timing_recovery_estimator = "qosst_core.dsp.timing_estimator.NoneTimingRecoveryEstimator"
+
+# Use only absolute value for synchronization sequence recovery.
+# Default : false
+synchronization_use_abs = false
 
 # Pulsed sampling for timing recovery.
 # Default : false
@@ -735,16 +742,22 @@ modulation_type = "qosst_core.modulation.GaussianModulation"
 # Default : 0
 modulation_size = 0
 
-[frame.zadoff_chu]
+[frame.synchronization]
+
+# Type of sequence to use, inheriting from
+# qosst_core.synchronization.synchronization.BaseSynchronizationSequence
+# Default : "qosst_core.synchronization.zc.ZadoffChuSequence"
+synchronization_type = "qosst_core.synchronization.zc.ZadoffChuSequence"
+
 # The root of the Zadoff-Chu sequence.
 # This should be comprime with the length.
 # Default : 5
-root = 5
+zc_root = 5
 
 # The length of the Zadoff-Chu sequence.
 # This should be coprime with the root.
 # Default : 3989
-length = 3989
+zc_length = 3989
 
 # The rate of the Zadoff-Chu sequence in Samples/s.
 # A rate of 0 will be understood as to use the same rate as the DAC.

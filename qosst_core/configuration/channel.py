@@ -17,6 +17,7 @@
 """
 Configuration for the channel section.
 """
+
 from typing import Dict, Type
 import logging
 

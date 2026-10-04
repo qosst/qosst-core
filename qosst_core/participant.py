@@ -17,6 +17,7 @@
 """
 Enumeration of the participants in the protocol.
 """
+
 from enum import Enum
 
 

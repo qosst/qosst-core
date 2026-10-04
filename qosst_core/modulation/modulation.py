@@ -17,6 +17,7 @@
 """
 Generic modulation.
 """
+
 import abc
 from typing import Optional
 

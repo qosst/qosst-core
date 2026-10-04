@@ -17,6 +17,7 @@
 """
 This file contains function that will be called from the main command of qosst_core.
 """
+
 import argparse
 import shutil
 from pathlib import Path

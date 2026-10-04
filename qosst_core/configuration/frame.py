@@ -25,7 +25,7 @@ import logging
 import numpy as np
 
 from qosst_core.modulation import Modulation
-from qosst_core.synchronization import SynchronizationSequence
+from qosst_core.synchronization import BaseSynchronizationSequence
 from qosst_core.configuration.exceptions import InvalidConfiguration
 from qosst_core.configuration.base import BaseConfiguration
 from qosst_core.utils import get_object_by_import_path
@@ -168,7 +168,9 @@ class FrameSynchronizationConfiguration(BaseConfiguration):
     Configuration of the synchronization sequence. It should correspond to the frame.synchronization section.
     """
 
-    synchronization_cls: Type[SynchronizationSequence]  #: Synchronization sequence class.
+    synchronization_cls: Type[
+        BaseSynchronizationSequence
+    ]  #: Synchronization sequence class.
     zc_root: int  #: Root value for the Zadoff-Chu Sequence.
     zc_length: int  #: Length of the Zadoff-Chu sequence.
     mls_nbits: int  #: Number of bits of the Maximum Length Sequence.
@@ -176,11 +178,15 @@ class FrameSynchronizationConfiguration(BaseConfiguration):
     amplitude: float  #: Amplitude of the Zadoff-Chu sequence. An amplitude of 1.0 means that the sequence is output at the maximum amplitude of the DAC.
 
     DEFAULT_SYNCHRONIZATION_STR: str = (
-        'qosst_core.synchronization.ZadoffChuSequence'  #: Default synchronization.
+        "qosst_core.synchronization.ZadoffChuSequence"  #: Default synchronization.
     )
     DEFAULT_ZC_ROOT: int = 5  #: Default value for the root of the Zadoff-Chu sequence.
-    DEFAULT_ZC_LENGTH: int = 3989  #: Default value for the length of the Zadoff-Chu sequence.
-    DEFAULT_MLS_NBITS: int = 16  #: Default value for the number of bits of the Maximum Length Sequence.
+    DEFAULT_ZC_LENGTH: int = (
+        3989  #: Default value for the length of the Zadoff-Chu sequence.
+    )
+    DEFAULT_MLS_NBITS: int = (
+        16  #: Default value for the number of bits of the Maximum Length Sequence.
+    )
     DEFAULT_RATE: float = 0  #: Default rate.
     DEFAULT_AMPLITUDE: float = 1  #: Default amplitude of the synchronization sequence.
 
@@ -194,7 +200,7 @@ class FrameSynchronizationConfiguration(BaseConfiguration):
             InvalidConfiguration: If the root and length of the Zadoff-Chu sequence are not coprimes.
             InvalidConfiguration: If the rate is less than zero.
             InvalidConfiguration: If the amplitude is not between 0 and 1.
-            InvalidConfiguration: If the given synchronization class is not a subclass of :class:`~qosst_core.synchronization.SynchronizationSequence`
+            InvalidConfiguration: If the given synchronization class is not a subclass of :class:`~qosst_core.synchronization.BaseSynchronizationSequence`
             InvalidConfiguration: If the synchronization class does not exist in `qosst_core.syncrhonization`.
         """
         self.zc_root = config.get("zc_root", self.DEFAULT_ZC_ROOT)
@@ -202,7 +208,9 @@ class FrameSynchronizationConfiguration(BaseConfiguration):
         self.mls_nbits = config.get("mls_nbits", self.DEFAULT_MLS_NBITS)
         self.rate = config.get("rate", self.DEFAULT_RATE)
         self.amplitude = config.get("amplitude", self.DEFAULT_AMPLITUDE)
-        synchronization_str = config.get("synchronization_type", self.DEFAULT_SYNCHRONIZATION_STR)
+        synchronization_str = config.get(
+            "synchronization_type", self.DEFAULT_SYNCHRONIZATION_STR
+        )
         try:
             self.synchronization_cls = get_object_by_import_path(synchronization_str)
         except ImportError as exc:
@@ -210,7 +218,7 @@ class FrameSynchronizationConfiguration(BaseConfiguration):
                 f"Cannot load synchronization sequence class {synchronization_str}."
             ) from exc
 
-        if not issubclass(self.synchronization_cls, SynchronizationSequence):
+        if not issubclass(self.synchronization_cls, BaseSynchronizationSequence):
             raise InvalidConfiguration(
                 f"The synchronization class {synchronization_str} is not a subclass of qosst_core.synchronization.SinchronizationSequence."
             )
@@ -219,17 +227,17 @@ class FrameSynchronizationConfiguration(BaseConfiguration):
             raise InvalidConfiguration(
                 f"The root and length of the Zadoff-Chu sequence should be coprimes (gcd = {gcd(self.zc_root, self.zc_length)})"
             )
-        
+
         if not self.rate >= 0:
             raise InvalidConfiguration(
                 "The rate of the synchronization sequence must be zero or positive (given value : {self.rate})"
             )
-        
+
         if not 0 <= self.amplitude <= 1:
             raise InvalidConfiguration(
                 f"The amplitude of the configuration sequence must be between 0 and 1 (given value : {self.amplitude})"
             )
-        
+
     def __str__(self) -> str:
         res = "Frame Synchronization Configuration\n"
         res += "----------------------\n"
@@ -289,7 +297,9 @@ class FrameConfiguration(BaseConfiguration):
         self.num_zeros_end = config.get("num_zeros_end", self.DEFAULT_NUM_ZEROS_END)
         self.pilots = FramePilotsConfiguration(config.get("pilots", {}))
         self.quantum = FrameQuantumConfiguration(config.get("quantum", {}))
-        self.synchronization = FrameSynchronizationConfiguration(config.get("synchronization", {}))
+        self.synchronization = FrameSynchronizationConfiguration(
+            config.get("synchronization", {})
+        )
 
     def __str__(self) -> str:
         res = "=========================\n"
