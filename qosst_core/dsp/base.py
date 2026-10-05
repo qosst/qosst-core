@@ -117,9 +117,7 @@ class BaseDSP(abc.ABC):
         bool  #: Use only abs for recovering the synchronization sequence.
     )
     pulsed_sampling: bool  #: Use the pulsed sampling in the timing recovery.
-    timing_offset: (
-        float  #: Clock drift between Alice and Bob over the frame, in samples, corrected by the static timing recovery.
-    )
+    timing_offset: float  #: Clock drift between Alice and Bob over the frame, in samples, corrected by the static timing recovery.
 
     # pylint: disable=too-many-arguments,too-many-positional-arguments,too-many-locals
     def set_parameters(
@@ -140,7 +138,7 @@ class BaseDSP(abc.ABC):
         phase_estimator_cls: Type[BasePhaseEstimator],
         timing_estimator_cls: Type[BaseTimingRecoveryEstimator],
         switching_time: float = 0.02,
-        linewidth: float = 5e3,
+        linewidth: float = 300,
         subframe_length: int = 50_000,
         subframe_subdivision: int = 1,
         fir_size: int = 500,
@@ -158,7 +156,7 @@ class BaseDSP(abc.ABC):
         elec_shot_noise_estimation_ratio: float = 1.0,
         synchronization_use_abs: bool = False,
         pulsed_sampling: bool = False,
-        timing_offset: float = 10,
+        timing_offset: float = 11,
     ):
         """
         Set the parameters of the DSP.
@@ -196,7 +194,7 @@ class BaseDSP(abc.ABC):
             elec_shot_noise_estimation_ratio (float, optional): Ratio for downsampling electronic and shot noise samples for special DSP. Defaults to 1.
             synchronization_use_abs (bool, optional): Use only abs for recovering the synchronization sequence. Defaults to 1.
             pulsed_sampling (bool, optional): Use the pulsed sampling in the timing recovery. Defaults to False.
-            timing_offset (float, optional): Clock drift between Alice and Bob over the frame, in samples, corrected by the static timing recovery. Defaults to 10.
+            timing_offset (float, optional): Clock drift between Alice and Bob over the frame, in samples, corrected by the static timing recovery. Defaults to 11.
         """
         self.symbol_rate = symbol_rate
         self.dac_rate = dac_rate

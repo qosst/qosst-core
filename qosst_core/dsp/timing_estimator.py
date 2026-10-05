@@ -44,6 +44,7 @@ class BaseTimingRecoveryEstimator(abc.ABC):
         int  #: Number of samples recovered in the previous subframe.
     )
     pulsed_sampling: bool  #: Wether to use the pulse sampling method, which consists in convolving the signal with a rectangular pulse of width equal to the symbol period, and then sampling at the symbol rate.
+    offset: float  #: Clock drift between Alice and Bob over the frame, in samples, corrected by the static timing recovery.
 
     # pylint: disable=too-many-arguments, too-many-positional-arguments
     def __init__(
@@ -59,6 +60,7 @@ class BaseTimingRecoveryEstimator(abc.ABC):
         frequency_shift: float,
         num_samples_previous_subframe: int,
         pulsed_sampling: bool = False,
+        offset: float = 11,
     ) -> None:
         """
         Args:
@@ -73,6 +75,7 @@ class BaseTimingRecoveryEstimator(abc.ABC):
             frequency_shift (float): Frequency shift of the quantum data.
             num_samples_previous_subframe (int): Number of samples recovered in the previous subframe.
             pulsed_sampling (bool, optional): Wether to use the pulse sampling method, which consists in convolving the signal with a rectangular pulse of width equal to the symbol period, and then sampling at the symbol rate. Defaults to False.
+            offset (float, optional): Clock drift between Alice and Bob over the frame, in samples, corrected by the static timing recovery (unused by the other estimators). Defaults to 11.
         """
         self.sps = sps
         self.adc_rate = adc_rate
@@ -85,6 +88,7 @@ class BaseTimingRecoveryEstimator(abc.ABC):
         self.frequency_shift = frequency_shift
         self.num_samples_previous_subframe = num_samples_previous_subframe
         self.pulsed_sampling = pulsed_sampling
+        self.offset = offset
 
     @abc.abstractmethod
     def sample(

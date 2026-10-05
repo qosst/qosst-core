@@ -464,12 +464,8 @@ class BobDSPConfiguration(BaseConfiguration):
     synchronization_use_abs: (
         bool  #: Only se absolute value for synchronization recovery.
     )
-    pulsed_sampling: (
-        bool  #: Whether to use pulsed sampling in timing recovery. If true, the signal is sampled at a higher rate and then resampled at the optimal sampling time. If false, the signal is directly sampled at the optimal sampling time.
-    )
-    timing_offset: (
-        float  #: Clock drift between Alice and Bob over the frame, in samples, corrected by the static timing recovery.
-    )
+    pulsed_sampling: bool  #: Whether to use pulsed sampling in timing recovery. If true, the signal is sampled at a higher rate and then resampled at the optimal sampling time. If false, the signal is directly sampled at the optimal sampling time.
+    timing_offset: float  #: Clock drift between Alice and Bob over the frame, in samples, corrected by the static timing recovery.
 
     DEFAULT_DSP_CLASS_STR: str = "qosst_core.dsp.base.NoneDSP"  #: Default DSP class.
     DEFAULT_DEBUG: bool = True  #: Default value fot the debug mode.
@@ -499,7 +495,7 @@ class BobDSPConfiguration(BaseConfiguration):
         "qosst_core.dsp.phase_estimation.NonePhaseEstimator"  #: Default phase estimator.
     )
     DEFAULT_LINEWIDTH: float = (
-        100  #: Default value for the linewidth of the laser, in Hz.
+        300  #: Default value for the linewidth of the laser, in Hz.
     )
     DEFAULT_TIMING_RECOVERY_ESTIMATOR_STR: str = (
         "qosst_core.dsp.timing_recovery.NoneTimingRecoveryEstimator"  #: Default timing recovery estimator.
@@ -511,7 +507,7 @@ class BobDSPConfiguration(BaseConfiguration):
         False  #: Default value for the use of pulsed sampling in timing recovery.
     )
     DEFAULT_TIMING_OFFSET: float = (
-        10  #: Default value for the clock drift corrected by the static timing recovery, in samples.
+        11  #: Default value for the clock drift corrected by the static timing recovery, in samples.
     )
 
     def from_dict(self, config: dict) -> None:
